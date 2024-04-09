@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.common.date import Date
+from common.date import Date
 
 
 class CategoryBase(BaseModel):

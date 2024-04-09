@@ -1,4 +1,7 @@
-class Date(object):
+from pydantic import BaseModel
+
+
+class Date(BaseModel):
     day: int
     month: int
     year: int
