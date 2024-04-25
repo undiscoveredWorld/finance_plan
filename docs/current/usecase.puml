@@ -1,0 +1,9 @@
+@startuml usecase
+
+actor User
+
+User -down-> (Save&load data)
+User -down-> (CRUD)
+(CRUD) <-down-. (Category)
+
+@enduml

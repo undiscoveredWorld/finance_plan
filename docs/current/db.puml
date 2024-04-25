@@ -1,0 +1,31 @@
+@startuml entity
+
+entity Category {
+    id: int <<PK>>
+    name: str
+}
+
+entity Subcategory {
+    id: int <<PK>>
+    name: str
+}
+
+entity Product {
+    id: int <<PK>>
+    name: str
+}
+
+entity Buy {
+    id: int <<PK>>
+    date: Date
+    category: Category <<FK>>
+    subcategory: Subcategory <<FK>>
+    product: Product <<FK>>
+}
+
+
+Buy ||-down- Category
+Buy ||-down- Subcategory
+Buy ||-down- Product
+
+@enduml
