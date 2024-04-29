@@ -1,0 +1,16 @@
+@startuml
+
+actor User
+
+User -down-> (CRUD)
+(CRUD) <.-down- (Sell) : extends
+(CRUD) <.-down- (Category) : extends
+(CRUD) <.-down- (Subcategory) : extends
+(CRUD) <.-down- (Active) : extends
+(CRUD) <.-down- (Re-count) : extends
+
+User -down-> (Reports)
+(Reports) <.-down- (Daily expenses) : extends
+(Reports) <.-down- (Monthly expenses) : extends
+
+@enduml

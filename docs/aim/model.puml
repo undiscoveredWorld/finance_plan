@@ -1,0 +1,25 @@
+@startuml component
+
+package Common {
+    component [common.Data]
+    component [Date]
+}
+
+package Domain {
+    component [Models]
+    component [domain.Data]
+    component [Reports]
+}
+
+component [Web UI]
+component [Main]
+
+
+[Main] -down-> [Models]
+[Main] -down-> [Reports]
+[Main] -down-> [domain.Data]
+[domain.Data] -down-> [common.Data]
+[domain.Data] -> [Models]
+[Models] -down-> [Date]
+
+@enduml
