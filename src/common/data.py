@@ -18,6 +18,12 @@ class DataFactory:
     def list_categories(self) -> list[Category]:
         return self.__data["categories"]
 
+    def update_category(self, id_: int, new_category: CategoryCreate) -> None:
+        self.__data["categories"][id_] = new_category
+
+    def delete_category(self, id_: int) -> None:
+        self.__data["categories"].pop(id_)
+
     def save_data(self) -> None:
         with open(PATH_TO_DATA_FILE, 'w') as file:
             file.write(

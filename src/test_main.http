@@ -21,3 +21,13 @@ POST http://127.0.0.1:8080/load
 GET http://127.0.0.1:8080/categories
 Accept: application/json
 ###
+
+PUT http://127.0.0.1:8080/update_category?id_=2
+Content-Type: application/json
+
+{
+  "name": "string"
+}
+###
+
+DELETE http://127.0.0.1:8080/delete_category?id_=2
