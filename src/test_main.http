@@ -1,9 +1,23 @@
 # Test your FastAPI endpoints
 
-GET http://127.0.0.1:8000/
+GET http://127.0.0.1:8080/docs
 Accept: application/json
 ###
 
-GET http://127.0.0.1:8000/hello/User
+POST http://127.0.0.1:8080/create_category
+Content-Type: application/json
+
+{
+  "name": "string"
+}
+###
+
+POST http://127.0.0.1:8080/save
+###
+
+POST http://127.0.0.1:8080/load
+###
+
+GET http://127.0.0.1:8080/categories
 Accept: application/json
 ###
