@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from fastapi.routing import APIRouter
 from fastapi.responses import Response
@@ -38,6 +39,7 @@ def category(category_update: CategoryUpdate):
             category_update
         )
     except IndexError:
+        logging.exception("IndexError")
         return Response(
             status_code=422
         )
@@ -48,6 +50,7 @@ def category(id_: int):
     try:
         delete_category(id_)
     except IndexError:
+        logging.exception("IndexError")
         return Response(
             status_code=422
         )
