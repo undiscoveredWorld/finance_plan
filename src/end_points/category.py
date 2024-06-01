@@ -7,7 +7,7 @@ from domain.models import (
     CategoryUpdate,
     CategoryCreate
 )
-from domain.data import (
+from domain.data.category import (
     list_categories,
     add_category,
     update_category,

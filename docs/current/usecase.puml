@@ -4,6 +4,7 @@ actor User
 
 User -down-> (Save&load data)
 User -down-> (CRUD)
-(CRUD) <-down-. (Category)
+(CRUD) <-down. (Category) : extends
+(CRUD) <-down. (Subcategory) : extends
 
 @enduml

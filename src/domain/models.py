@@ -19,15 +19,19 @@ class Category(CategoryBase):
     id: int
 
 
-class SubCategoryBase(BaseModel):
+class SubcategoryBase(BaseModel):
     name: str
 
 
-class SubCategoryCreate(SubCategoryBase):
+class SubcategoryCreate(SubcategoryBase):
     ...
 
 
-class SubCategory(SubCategoryBase):
+class SubcategoryUpdate(SubcategoryBase):
+    id: int
+
+
+class Subcategory(SubcategoryBase):
     id: int
 
 
@@ -46,7 +50,7 @@ class Product(ProductBase):
 class BuyBase(BaseModel):
     date: Date
     category: CategoryBase
-    subcategory: SubCategoryBase
+    subcategory: SubcategoryBase
     product: ProductBase
 
 

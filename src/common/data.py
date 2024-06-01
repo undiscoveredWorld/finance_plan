@@ -1,8 +1,7 @@
 import ast
-import os
 
 from pydantic import BaseModel
-from typing import List, Dict, Type
+from typing import List, Dict
 
 from settings import PATH_TO_DATA_FILE
 
