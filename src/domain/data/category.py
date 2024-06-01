@@ -6,7 +6,7 @@ from typing import (
 from common.data import Catalog
 from domain.models import CategoryCreate, Category, CategoryUpdate
 
-categories = Catalog("categories", Category)
+categories = Catalog("categories")
 
 
 def add_category(category: CategoryCreate) -> None:

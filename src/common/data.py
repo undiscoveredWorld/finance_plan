@@ -12,11 +12,9 @@ _data: Dict[str, List[Dict]] = dict()
 
 class Catalog:
     _catalog_name: str
-    _StorageModel: Type[BaseModel]
 
-    def __init__(self, catalog_name: str, storage_model: Type[BaseModel]):
+    def __init__(self, catalog_name: str):
         self._catalog_name = catalog_name
-        self._storage_model = storage_model
 
         _data[self._catalog_name] = list()
 
