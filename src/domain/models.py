@@ -11,6 +11,10 @@ class CategoryCreate(CategoryBase):
     ...
 
 
+class CategoryUpdate(CategoryBase):
+    id: int
+
+
 class Category(CategoryBase):
     id: int
 

@@ -1,21 +1,23 @@
 @startuml component
 
 package Common {
-    component [Data]
+    component [common.Data]
     component [Date]
 }
 
 package Domain {
     component [Models]
+    component [domain.Data]
 }
 
 component [Web UI]
 component [Main]
 
 
-[Main] -down-> [Data]
+[Main] -down-> [domain.Data]
 [Main] -down-> [Models]
-[Data] -up-> [Models]
-[Data] -> [Date]
+[domain.Data] -right-> [Models]
+[domain.Data] -down-> [common.Data]
+[common.Data] -> [Date]
 
 @enduml
