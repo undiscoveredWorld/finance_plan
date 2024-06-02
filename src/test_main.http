@@ -22,7 +22,7 @@ GET http://127.0.0.1:8080/categories
 Accept: application/json
 ###
 
-PUT http://127.0.0.1:8080/update_category?id_=2
+PUT http://127.0.0.1:8080/update_category?id_=0
 Content-Type: application/json
 
 {
@@ -30,4 +30,27 @@ Content-Type: application/json
 }
 ###
 
-DELETE http://127.0.0.1:8080/delete_category?id_=2
+DELETE http://127.0.0.1:8080/delete_category?id_=0
+###
+
+POST http://127.0.0.1:8080/create_subcategory
+Content-Type: application/json
+
+{
+  "name": "string"
+}
+###
+GET http://127.0.0.1:8080/subcategories
+Accept: application/json
+###
+
+PUT http://127.0.0.1:8080/update_subcategory?id_=0
+Content-Type: application/json
+
+{
+  "name": "string"
+}
+###
+
+DELETE http://127.0.0.1:8080/delete_category?id_=0
+###

@@ -1,6 +1,7 @@
 import ast
+import copy
+import logging
 
-from pydantic import BaseModel
 from typing import List, Dict
 
 from settings import PATH_TO_DATA_FILE
@@ -13,24 +14,35 @@ class Catalog:
     _catalog_name: str
 
     def __init__(self, catalog_name: str):
+        if _check_catalog_name_engaged(catalog_name):
+            logging.warning("Trying to create catalog with engaged name")
+            raise RuntimeError("Catalog name is engaged")
+
         self._catalog_name = catalog_name
 
         _data[self._catalog_name] = list()
 
-    def add_element(self, element: BaseModel) -> None:
-        element_dict = element.model_dump()
-        element_dict["id"] = len(_data[self._catalog_name])
-
-        _data[self._catalog_name].append(element_dict)
+    def add_element(self, element: Dict) -> None:
+        _check_id_field_exist(element)
+        _data[self._catalog_name].append(element)
 
     def get_all_elements(self) -> List[Dict]:
-        return _data[self._catalog_name]
+        result: List[Dict] = copy.deepcopy(_data[self._catalog_name])
+        for i in range(len(result)):
+            result[i]["id"] = i
+        return result
 
     def update_element(self, id_: int, new_element: Dict) -> None:
+        _check_id_field_exist(new_element)
         _data[self._catalog_name][id_] = new_element
+        for key, value in new_element.items():
+            _data[self._catalog_name][id_][key] = value
 
     def delete_element(self, id_: int) -> None:
         _data[self._catalog_name].pop(id_)
+
+    def get_catalog_name(self) -> str:
+        return self._catalog_name
 
 
 def save_data_to_json_file() -> None:
@@ -51,3 +63,16 @@ def load_data_to_ram_from_json_file() -> None:
         data = file.read()
         data_dict = ast.literal_eval(data)
         _data = data_dict
+
+
+def _check_catalog_name_engaged(catalog_name: str) -> bool:
+    if catalog_name not in _data.keys():
+        return False
+    else:
+        return True
+
+
+def _check_id_field_exist(element):
+    if "id" in element.keys():
+        logging.warning("Trying create element with id field")
+        raise RuntimeError("Element contains reserved field -- id.")
