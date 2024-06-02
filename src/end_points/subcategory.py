@@ -22,38 +22,28 @@ subcategory_router = APIRouter(
 
 
 @subcategory_router.get("/subcategories", response_model=List[Subcategory])
-def get_all_subcategories():
+def list_subcategories_router() -> List[Subcategory]:
     return list_subcategories()
 
 
 @subcategory_router.post("/create_subcategory")
-def category(subcategory_create: SubcategoryCreate):
-    add_subcategory(
-        subcategory_create
-    )
+def create_subcategory_router(subcategory_create: SubcategoryCreate):
+    add_subcategory(subcategory_create)
 
 
 @subcategory_router.put("/update_subcategory")
-def category(subcategory_update: SubcategoryUpdate):
+def update_subcategory_router(id_: int, subcategory_update: SubcategoryUpdate):
     try:
-        update_subcategory(
-            subcategory_update
-        )
+        update_subcategory(id_, subcategory_update)
     except IndexError:
         logging.exception("IndexError")
-        return Response(
-            status_code=422
-        )
+        return Response(status_code=422)
 
 
 @subcategory_router.delete("/delete_subcategory")
-def category(id_: int):
+def delete_subcategory_router(id_: int):
     try:
         delete_subcategory(id_)
     except IndexError:
         logging.exception("IndexError")
-        return Response(
-            status_code=422
-        )
-
-
+        return Response(status_code=422)

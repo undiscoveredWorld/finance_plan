@@ -17,12 +17,14 @@ app.include_router(subcategory_router)
 @app.post("/save")
 def save():
     save_data_to_json_file()
+    return Response(status_code=200)
 
 
 @app.post("/load")
 def load():
     try:
         load_data_to_ram_from_json_file()
+        return Response(status_code=200)
     except FileNotFoundError:
         logging.exception("FileNotFound")
         return Response(status_code=422)

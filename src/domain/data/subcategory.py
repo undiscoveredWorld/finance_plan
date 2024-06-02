@@ -9,8 +9,8 @@ from domain.models import SubcategoryCreate, Subcategory, SubcategoryUpdate
 subcategories = Catalog("Subcategories")
 
 
-def add_subcategory(category: SubcategoryCreate) -> None:
-    subcategories.add_element(category)
+def add_subcategory(subcategory: SubcategoryCreate) -> None:
+    subcategories.add_element(subcategory.model_dump())
 
 
 def list_subcategories() -> List[Subcategory]:
@@ -19,7 +19,7 @@ def list_subcategories() -> List[Subcategory]:
     # Convert List[BaseModel] to List[Category]
     result_list: List[Subcategory] = list(
         map(
-            lambda x: Subcategory.model_validate(x),
+            Subcategory.model_validate,
             result_list
         )
     )
@@ -27,8 +27,8 @@ def list_subcategories() -> List[Subcategory]:
     return result_list
 
 
-def update_subcategory(new_category: SubcategoryUpdate) -> None:
-    subcategories.update_element(new_category.id, new_category.model_dump())
+def update_subcategory(id_: int,new_subcategory: SubcategoryUpdate) -> None:
+    subcategories.update_element(id_, new_subcategory.model_dump())
 
 
 def delete_subcategory(id_: int) -> None:

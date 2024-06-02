@@ -12,7 +12,7 @@ class CategoryCreate(CategoryBase):
 
 
 class CategoryUpdate(CategoryBase):
-    id: int
+    ...
 
 
 class Category(CategoryBase):
@@ -28,7 +28,7 @@ class SubcategoryCreate(SubcategoryBase):
 
 
 class SubcategoryUpdate(SubcategoryBase):
-    id: int
+    ...
 
 
 class Subcategory(SubcategoryBase):

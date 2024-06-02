@@ -23,7 +23,7 @@ class CatalogTestCase(unittest.TestCase):
 
     def test_positive_list_catalog(self):
         result: List[Dict] = self.test_catalog.get_all_elements()
-        self.assertTrue(type(result) is list)
+        self.assertTrue(isinstance(result, list))
         self.assertEqual([], result)
 
     def test_safety_data_after_list_catalog(self):
@@ -115,6 +115,6 @@ class CatalogTestCase(unittest.TestCase):
 
     def tearDown(self):
         super().tearDown()
-        common.data._data = dict()
+        common.data._data = {}
 
 

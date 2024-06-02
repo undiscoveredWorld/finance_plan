@@ -10,7 +10,7 @@ categories = Catalog("Categories")
 
 
 def add_category(category: CategoryCreate) -> None:
-    categories.add_element(category)
+    categories.add_element(category.model_dump())
 
 
 def list_categories() -> List[Category]:
@@ -19,7 +19,7 @@ def list_categories() -> List[Category]:
     # Convert List[BaseModel] to List[Category]
     result_list: List[Category] = list(
         map(
-            lambda x: Category.model_validate(x),
+            Category.model_validate,
             result_list
         )
     )
@@ -27,8 +27,8 @@ def list_categories() -> List[Category]:
     return result_list
 
 
-def update_category(new_category: CategoryUpdate) -> None:
-    categories.update_element(new_category.id, new_category.model_dump())
+def update_category(id: int, new_category: CategoryUpdate) -> None:
+    categories.update_element(id, new_category.model_dump())
 
 
 def delete_category(id_: int) -> None:

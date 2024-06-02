@@ -21,38 +21,29 @@ category_router = APIRouter(
 
 
 @category_router.get("/categories", response_model=List[Category])
-def get_all_categories():
+def list_categories_router() -> List[Category]:
     return list_categories()
 
 
 @category_router.post("/create_category")
-def category(category_create: CategoryCreate):
-    add_category(
-        category_create
-    )
+def create_category_router(category_create: CategoryCreate):
+    add_category(category_create)
 
 
 @category_router.put("/update_category")
-def category(category_update: CategoryUpdate):
+def update_category_router(id_: int, category_update: CategoryUpdate):
     try:
-        update_category(
-            category_update
-        )
+        update_category(id_, category_update)
+        return Response(status_code=200)
     except IndexError:
         logging.exception("IndexError")
-        return Response(
-            status_code=422
-        )
+        return Response(status_code=422)
 
 
 @category_router.delete("/delete_category")
-def category(id_: int):
+def delete_category_router(id_: int):
     try:
         delete_category(id_)
     except IndexError:
         logging.exception("IndexError")
-        return Response(
-            status_code=422
-        )
-
-
+        return Response(status_code=422)
