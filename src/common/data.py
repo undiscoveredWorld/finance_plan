@@ -47,6 +47,9 @@ class Catalog:
 
 def save_data_to_json_file() -> None:
     """ save_data_to_json_file opens or creates a json file and writes in it current state of data. """
+    if not _check_data_types_valid():
+        logging.warning("Data is busy")
+        raise RuntimeError("Cannot save data to json file. Data is busy")
     with open(PATH_TO_DATA_FILE, 'w', encoding='UTF-8') as file:
         file.write(
             str(_data)
@@ -76,3 +79,23 @@ def _check_id_field_exist(element: Dict):
     if "id" in element.keys():
         logging.warning("Trying create element with id field")
         raise RuntimeError("Element contains reserved field -- id.")
+
+
+def _check_data_types_valid() -> bool:
+    """ _check_data_types_valid returns true, if _data type is Dict[str, List[Dict]], else false. """
+    if not isinstance(_data, dict):
+        return False
+
+    for catalog_name in _data.keys():
+        if not isinstance(catalog_name, str):
+            return False
+
+    for catalog in _data.values():
+        if not isinstance(catalog, list):
+            return False
+
+        for element in catalog:
+            if not isinstance(element, dict):
+                return False
+
+    return True

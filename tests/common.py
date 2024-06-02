@@ -1,9 +1,14 @@
 import unittest
+
 from typing import List, Dict
 from pydantic import BaseModel
 
 import common
-from common.data import Catalog
+from common.data import (
+    Catalog,
+    save_data_to_json_file,
+    load_data_to_ram_from_json_file
+)
 
 
 class TestModel(BaseModel):
@@ -118,3 +123,81 @@ class CatalogTestCase(unittest.TestCase):
         common.data._data = {}
 
 
+class OtherTestCase(unittest.TestCase):
+    __original_path_data_file: str
+    test_catalog: Catalog
+
+    def test_positive_save_load_data(self):
+        self.test_catalog.add_element(
+            {
+                "name": "sdf"
+            }
+        )
+        save_data_to_json_file()
+        self.test_catalog.add_element(
+            {
+                "name": "sdf"
+            }
+        )
+        load_data_to_ram_from_json_file()
+
+        self.assertEqual(
+            [{
+                "name": "sdf"
+            }],
+            common.data._data["Test_catalog"]
+        )
+
+    def test_positive_save_load_empty_data(self):
+        save_data_to_json_file()
+        load_data_to_ram_from_json_file()
+        self.assertEqual(
+            [],
+            common.data._data["Test_catalog"]
+        )
+
+    def test_save_with_busy_data(self):
+        common.data._data["Test_catalog"] = {}
+        with self.assertRaises(RuntimeError):
+            save_data_to_json_file()
+
+    def test_positive_check_catalog_name_engaged(self):
+        Catalog("Engaged")
+        self.assertTrue(common.data._check_catalog_name_engaged("Engaged"))
+
+    def test_positive_check_id_field_exist(self):
+        with self.assertRaises(RuntimeError):
+            common.data._check_id_field_exist(
+                {
+                    "id": 2,
+                    "name": "sdf"
+                }
+            )
+
+        common.data._check_id_field_exist(
+            {"name": "sdf"}
+        )
+
+    def test_positive_check_data_types_valid(self):
+        common.data._data = []
+        self.assertFalse(common.data._check_data_types_valid())
+
+        common.data._data = {4: []}
+        self.assertFalse(common.data._check_data_types_valid())
+
+        common.data._data = {"a": []}
+        self.assertTrue(common.data._check_data_types_valid())
+
+        common.data._data = {"a": [324]}
+        self.assertFalse(common.data._check_data_types_valid())
+
+        common.data._data = {"a": [{}, {}]}
+        self.assertTrue(common.data._check_data_types_valid())
+
+    def setUp(self):
+        super().setUp()
+        self.test_catalog = Catalog("Test_catalog")
+
+    def tearDown(self):
+        super().tearDown()
+        common.data._data = {}
