@@ -7,7 +7,9 @@ import common
 from common.data import (
     Catalog,
     save_data_to_json_file,
-    load_data_to_ram_from_json_file
+    load_data_to_ram_from_json_file,
+    check_object_is_subclass_of_model,
+    check_unique_of_field_in_catalog,
 )
 
 
@@ -100,7 +102,7 @@ class CatalogTestCase(unittest.TestCase):
 
     def test_update_by_free_id(self):
         with self.assertRaises(IndexError):
-            self.test_catalog.update_element(100, {})
+            self.test_catalog.update_element(100, {"name": "q"})
 
     def test_positive_delete_element_in_catalog(self):
         self.test_catalog.add_element({})
@@ -113,6 +115,16 @@ class CatalogTestCase(unittest.TestCase):
     def test_delete_by_free_id(self):
         with self.assertRaises(IndexError):
             self.test_catalog.delete_element(100)
+
+    def test_positive_clear_catalog(self):
+        for i in range(10):
+            self.test_catalog.add_element({"name": "fsdf"})
+        self.test_catalog.clear_catalog()
+
+        self.assertEqual(
+            [],
+            common.data._data[self.test_catalog.get_catalog_name()]
+        )
 
     def setUp(self):
         super().setUp()
@@ -193,6 +205,49 @@ class OtherTestCase(unittest.TestCase):
 
         common.data._data = {"a": [{}, {}]}
         self.assertTrue(common.data._check_data_types_valid())
+
+    def test_positive_check_object_is_subclass_of_base_model(self):
+        class A(BaseModel):
+            name: str
+
+        class B(BaseModel):
+            name: str
+
+        class C(B):
+            description: str
+
+        a = A(name="A")
+        b = B(name="B")
+        c = C(name="C", description="")
+
+        check_object_is_subclass_of_model(a, A)
+        check_object_is_subclass_of_model(b, B)
+        check_object_is_subclass_of_model(c, C)
+        check_object_is_subclass_of_model(c, B)
+
+        with self.assertRaises(RuntimeError):
+            check_object_is_subclass_of_model(c, A)
+        with self.assertRaises(RuntimeError):
+            check_object_is_subclass_of_model(b, A)
+        with self.assertRaises(RuntimeError):
+            check_object_is_subclass_of_model(b, C)
+
+    def test_positive_check_unique_of_field_in_catalog(self):
+        self.test_catalog.add_element({"name": "sdf"})
+        with self.assertRaises(RuntimeError):
+            check_unique_of_field_in_catalog(
+                value="sdf",
+                field_name="name",
+                catalog_name=self.test_catalog.get_catalog_name()
+            )
+
+    def test_check_unique_of_field_in_catalog_with_busy_catalog_name(self):
+        with self.assertRaises(KeyError):
+            check_unique_of_field_in_catalog(
+                value="dasf",
+                field_name="name",
+                catalog_name="busy"
+            )
 
     def setUp(self):
         super().setUp()

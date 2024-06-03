@@ -2,7 +2,14 @@ import ast
 import copy
 import logging
 
-from typing import List, Dict
+from typing import (
+    List,
+    Dict,
+    Type,
+    Any,
+)
+
+from pydantic import BaseModel
 
 from settings import PATH_TO_DATA_FILE
 
@@ -34,15 +41,18 @@ class Catalog:
 
     def update_element(self, id_: int, new_element: Dict) -> None:
         _check_id_field_exist(new_element)
-        _data[self._catalog_name][id_] = new_element
         for key, value in new_element.items():
-            _data[self._catalog_name][id_][key] = value
+            if value is not None:
+                _data[self._catalog_name][id_][key] = value
 
     def delete_element(self, id_: int) -> None:
         _data[self._catalog_name].pop(id_)
 
     def get_catalog_name(self) -> str:
         return self._catalog_name
+
+    def clear_catalog(self) -> None:
+        _data[self._catalog_name] = []
 
 
 def save_data_to_json_file() -> None:
@@ -66,6 +76,24 @@ def load_data_to_ram_from_json_file() -> None:
         data = file.read()
         data_dict = ast.literal_eval(data)
         _data = data_dict
+
+
+def check_object_is_subclass_of_model(object_: BaseModel, model: Type[BaseModel]) -> None:
+    """check_object_is_subclass_of_model raises exception if object is not subclass of model.
+
+    :raises: RuntimeError
+    """
+    if not issubclass(object_.__class__, model):
+        logging.warning(f"Trying create object by invalid model. Got {object_.__class__}, expected {model}")
+        raise RuntimeError(f"Got an invalid model to create. Got {object_.__class__}, expected {model}")
+
+
+def check_unique_of_field_in_catalog(value: Any, field_name: str, catalog_name: str):
+    """check_unique_of_field_in_catalog raises exception if field is not unique."""
+    for element in _data[catalog_name]:
+        if element[field_name] == value:
+            logging.info("Trying duplicate unique field value")
+            raise RuntimeError(f"Field {field_name} is unique. Got {value}, it isn't unique in {catalog_name}")
 
 
 def _check_catalog_name_engaged(catalog_name: str) -> bool:
