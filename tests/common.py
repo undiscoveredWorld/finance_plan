@@ -10,6 +10,7 @@ from common.data import (
     load_data_to_ram_from_json_file,
     check_object_is_subclass_of_model,
     check_unique_of_field_in_catalog,
+    _put_in_all_elements_id_field
 )
 
 
@@ -175,7 +176,8 @@ class OtherTestCase(unittest.TestCase):
 
     def test_positive_check_catalog_name_engaged(self):
         Catalog("Engaged")
-        self.assertTrue(common.data._check_catalog_name_engaged("Engaged"))
+        with self.assertRaises(RuntimeError):
+            common.data._check_catalog_name_engaged("Engaged")
 
     def test_positive_check_id_field_exist(self):
         with self.assertRaises(RuntimeError):
@@ -192,19 +194,19 @@ class OtherTestCase(unittest.TestCase):
 
     def test_positive_check_data_types_valid(self):
         common.data._data = []
-        self.assertFalse(common.data._check_data_types_valid())
+        self.assertFalse(common.data._is_data_types_valid())
 
         common.data._data = {4: []}
-        self.assertFalse(common.data._check_data_types_valid())
+        self.assertFalse(common.data._is_data_types_valid())
 
         common.data._data = {"a": []}
-        self.assertTrue(common.data._check_data_types_valid())
+        self.assertTrue(common.data._is_data_types_valid())
 
         common.data._data = {"a": [324]}
-        self.assertFalse(common.data._check_data_types_valid())
+        self.assertFalse(common.data._is_data_types_valid())
 
         common.data._data = {"a": [{}, {}]}
-        self.assertTrue(common.data._check_data_types_valid())
+        self.assertTrue(common.data._is_data_types_valid())
 
     def test_positive_check_object_is_subclass_of_base_model(self):
         class A(BaseModel):
@@ -248,6 +250,34 @@ class OtherTestCase(unittest.TestCase):
                 field_name="name",
                 catalog_name="busy"
             )
+
+    def test_positive_put_in_all_elements_id_field(self):
+        elements: list[dict] = [
+            {"name": "sdf"},
+            {"name": "sdf", "id": 100},
+            {},
+            {"id": 100}
+        ]
+        elements = _put_in_all_elements_id_field(elements)
+
+        self.assertEqual(
+            [
+                {"name": "sdf", "id": 0},
+                {"name": "sdf", "id": 1},
+                {"id": 2},
+                {"id": 3}
+            ],
+            elements
+        )
+
+    def test_safety_data_put_in_all_element_id_field(self):
+        original_elements: list[dict] = [{"name": "sdf"}]
+        _put_in_all_elements_id_field(original_elements)
+
+        self.assertEqual(
+            [{"name": "sdf"}],
+            original_elements
+        )
 
     def setUp(self):
         super().setUp()

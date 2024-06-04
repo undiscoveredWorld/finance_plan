@@ -38,6 +38,8 @@ pydantic==2.6.4
     #   fastapi
 pydantic-core==2.16.3
     # via pydantic
+pydoctest==0.1.22
+    # via -r requirements.in
 pylint==3.2.2
     # via -r requirements.in
 pytest==8.2.1

@@ -1,11 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional
 
 from common.date import Date
 
 
 class CategoryBase(BaseModel):
-    name: Optional[str] = None
+    name: str | None = None
 
 
 class CategoryCreate(CategoryBase):
@@ -22,8 +21,8 @@ class Category(CategoryBase):
 
 
 class SubcategoryBase(BaseModel):
-    name: Optional[str] = None
-    category_id: Optional[int] = None
+    name: str | None = None
+    category_id: int | None = None
 
 
 class SubcategoryCreate(SubcategoryBase):

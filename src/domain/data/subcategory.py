@@ -1,10 +1,5 @@
 import logging
 
-from typing import (
-    List,
-    Dict,
-)
-
 from common.data import (
     Catalog,
     check_unique_of_field_in_catalog,
@@ -23,6 +18,11 @@ subcategories = Catalog("Subcategories")
 
 
 def add_subcategory(subcategory: SubcategoryCreate) -> None:
+    """Add subcategory.
+
+    Raises:
+        RuntimeError ValueError
+    """
     check_object_is_subclass_of_model(subcategory, SubcategoryCreate)
     check_unique_of_field_in_catalog(
         value=subcategory.name,
@@ -32,11 +32,11 @@ def add_subcategory(subcategory: SubcategoryCreate) -> None:
     subcategories.add_element(subcategory.model_dump())
 
 
-def list_subcategories() -> List[Subcategory]:
-    result_list: List[Dict] = subcategories.get_all_elements()
+def list_subcategories() -> list[Subcategory]:
+    result_list: list[dict] = subcategories.get_all_elements()
 
-    # Convert List[BaseModel] to List[Subcategory]
-    result_list: List[Subcategory] = list(
+    # Convert list[dict] to list[Subcategory]
+    result_list: list[Subcategory] = list(
         map(
             Subcategory.model_validate,
             result_list
@@ -47,6 +47,13 @@ def list_subcategories() -> List[Subcategory]:
 
 
 def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
+    """Update subcategory.
+
+    Raises:
+        ValueError
+        IndexError
+        RuntimeError
+    """
     check_object_is_subclass_of_model(new_subcategory, SubcategoryUpdate)
     check_unique_of_field_in_catalog(
         value=new_subcategory.name,
@@ -58,6 +65,11 @@ def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
 
 
 def delete_subcategory(id_: int) -> None:
+    """Delete subcategory.
+
+    Raises:
+        IndexError
+    """
     subcategories.delete_element(id_)
 
 
@@ -66,7 +78,11 @@ def clear_subcategories() -> None:
 
 
 def _check_category_exists(id_: int) -> None:
-    """_check_category_exists raises an exception if category with that id does not exist."""
+    """Raise ValueError if category with that id does not exist.
+
+    Raises:
+        ValueError
+    """
     categories = list_categories()
     if id_ > len(categories):
         logging.warning("Trying link subcategory with not existing category")

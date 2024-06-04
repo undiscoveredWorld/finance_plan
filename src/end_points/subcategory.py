@@ -1,8 +1,7 @@
 import logging
 
-from typing import List
 from fastapi.routing import APIRouter
-from fastapi.responses import Response
+from fastapi.responses import Response, JSONResponse
 
 from domain.models import (
     Subcategory,
@@ -21,29 +20,61 @@ subcategory_router = APIRouter(
 )
 
 
-@subcategory_router.get("/subcategories", response_model=List[Subcategory])
-def list_subcategories_router() -> List[Subcategory]:
+@subcategory_router.get("/list_subcategories", response_model=list[Subcategory])
+def list_subcategories_router() -> list[Subcategory]:
     return list_subcategories()
 
 
 @subcategory_router.post("/create_subcategory")
-def create_subcategory_router(subcategory_create: SubcategoryCreate):
-    add_subcategory(subcategory_create)
+def create_subcategory_router(subcategory_create: SubcategoryCreate) -> Response:
+    try:
+        add_subcategory(subcategory_create)
+        return Response(status_code=200)
+    except RuntimeError as e:
+        return JSONResponse(
+            content={"Error": e.args[0]},
+            status_code=422
+        )
+    except ValueError as e:
+        return JSONResponse(
+            content={"Error": e.args[0]},
+            status_code=422
+        )
 
 
 @subcategory_router.put("/update_subcategory")
-def update_subcategory_router(id_: int, subcategory_update: SubcategoryUpdate):
+def update_subcategory_router(id_: int, subcategory_update: SubcategoryUpdate) -> Response:
     try:
         update_subcategory(id_, subcategory_update)
-    except IndexError:
-        logging.exception("IndexError")
-        return Response(status_code=422)
+        return Response(status_code=200)
+    except IndexError as e:
+        logging.exception(IndexError)
+        return JSONResponse(
+            content={"Error": e.args[0]},
+            status_code=422
+        )
+    except ValueError as e:
+        logging.exception(IndexError)
+        return JSONResponse(
+            content={"Error": e.args[0]},
+            status_code=422
+        )
+    except RuntimeError as e:
+        logging.exception(IndexError)
+        return JSONResponse(
+            content={"Error": e.args[0]},
+            status_code=422
+        )
 
 
 @subcategory_router.delete("/delete_subcategory")
-def delete_subcategory_router(id_: int):
+def delete_subcategory_router(id_: int) -> Response:
     try:
         delete_subcategory(id_)
-    except IndexError:
+        return Response(status_code=200)
+    except IndexError as e:
         logging.exception("IndexError")
-        return Response(status_code=422)
+        return JSONResponse(
+            content={"Error": e.args[0]},
+            status_code=422
+        )
