@@ -1,5 +1,5 @@
-from common.data import (
-    Catalog,
+from common.data.catalog import Catalog
+from common.data.utils import (
     check_object_is_subclass_of_model,
     check_unique_of_field_in_catalog
 )
