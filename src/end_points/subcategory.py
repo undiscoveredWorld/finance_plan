@@ -21,12 +21,12 @@ subcategory_router = APIRouter(
 
 
 @subcategory_router.get("/list_subcategories", response_model=list[Subcategory])
-def list_subcategories_router() -> list[Subcategory]:
+async def list_subcategories_router() -> list[Subcategory]:
     return list_subcategories()
 
 
 @subcategory_router.post("/create_subcategory")
-def create_subcategory_router(subcategory_create: SubcategoryCreate) -> Response:
+async def create_subcategory_router(subcategory_create: SubcategoryCreate) -> Response:
     try:
         add_subcategory(subcategory_create)
         return Response(status_code=200)
@@ -43,7 +43,7 @@ def create_subcategory_router(subcategory_create: SubcategoryCreate) -> Response
 
 
 @subcategory_router.put("/update_subcategory")
-def update_subcategory_router(id_: int, subcategory_update: SubcategoryUpdate) -> Response:
+async def update_subcategory_router(id_: int, subcategory_update: SubcategoryUpdate) -> Response:
     try:
         update_subcategory(id_, subcategory_update)
         return Response(status_code=200)
@@ -68,7 +68,7 @@ def update_subcategory_router(id_: int, subcategory_update: SubcategoryUpdate) -
 
 
 @subcategory_router.delete("/delete_subcategory")
-def delete_subcategory_router(id_: int) -> Response:
+async def delete_subcategory_router(id_: int) -> Response:
     try:
         delete_subcategory(id_)
         return Response(status_code=200)

@@ -39,7 +39,7 @@ class DataCategoryTestCase(unittest.TestCase):
         )
 
     def test_add_other_model_in_category_catalog(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             add_category(TestModel(name="test_category", description="test_category"))
 
     def test_add_a_category_twice(self):
@@ -74,7 +74,7 @@ class DataCategoryTestCase(unittest.TestCase):
 
     def test_update_category_by_other_model(self):
         add_category(CategoryCreate(name="test_category"))
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             update_category(0, SubcategoryUpdate(name="Updated"))
 
     def test_positive_delete_category(self):
@@ -109,7 +109,7 @@ class DataSubcategoryTest(unittest.TestCase):
         )
 
     def test_add_other_model_in_subcategory_catalog(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             add_subcategory(TestModel(name="test_subcategory", description="test_subcategory"))
 
     def test_add_a_subcategory_twice(self):
@@ -119,7 +119,7 @@ class DataSubcategoryTest(unittest.TestCase):
             add_subcategory(SubcategoryCreate(name="test", category_id=0))
 
     def test_link_subcategory_to_not_exist_category(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             add_subcategory(SubcategoryCreate(name="test", category_id=100))
 
     def test_positive_list_subcategories(self):
@@ -153,13 +153,13 @@ class DataSubcategoryTest(unittest.TestCase):
     def test_update_subcategory_by_other_model(self):
         add_category(CategoryCreate(name="test_category"))
         add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             update_subcategory(0, CategoryUpdate(name="Updated"))
 
     def test_update_subcategory_link_to_category_on_not_existing_category(self):
         add_category(CategoryCreate(name="test_category"))
         add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             update_subcategory(0, SubcategoryUpdate(category_id=100))
 
     def test_positive_delete_subcategory(self):

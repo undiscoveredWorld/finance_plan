@@ -21,6 +21,7 @@ class Catalog:
             catalog_name: Name of the catalog(key in _data). Must be str. Cannot be empty str -- ""
         Raises:
             RuntimeError
+            ValueError
         """
         self._set_catalog_name(catalog_name)
         _data[self._catalog_name] = []
@@ -33,10 +34,15 @@ class Catalog:
 
         Args:
             catalog_name: Name of the catalog(key in _data). Must be str. Cannot be empty str -- ""
+        Raises:
+            RuntimeError
+            ValueError
         """
         _check_catalog_name_engaged(catalog_name)
         if type(catalog_name) is str and catalog_name != "":
             self._catalog_name = catalog_name
+        else:
+            raise ValueError("Cannot create catalog. Name must be a string but not empty.")
 
     def clear_catalog(self) -> None:
         _data[self._catalog_name] = []
@@ -47,7 +53,7 @@ class Catalog:
         Args:
             element: Element to adding. Cannot contain id field(key)
         Raises:
-            RuntimeError
+            ValueError
         """
         _check_id_field_exist(element)
         _data[self._catalog_name].append(element)
@@ -60,11 +66,12 @@ class Catalog:
         """Update element in _data.
 
         Raises:
-            IndexError, RuntimeError
+            ValueError
+            IndexError
         """
         _check_id_field_exist(new_element)
         for key, value in new_element.items():
-            if value is not None:
+            if value is not None and value != _data[self._catalog_name][id_][key]:
                 _data[self._catalog_name][id_][key] = value
 
     def delete_element(self, id_: int) -> None:
@@ -82,13 +89,21 @@ def save_data_to_json_file() -> None:
     Raises:
         RuntimeError
     """
-    if not _is_data_types_valid():
-        logging.warning("Data is busy")
-        raise RuntimeError("Cannot save data to json file. Data is busy")
+    _check_data_types_valid()
     with open(PATH_TO_DATA_FILE, 'w', encoding='utf-8') as file:
         file.write(
             str(_data)
         )
+
+
+def _check_data_types_valid():
+    """Check _data on type dict[str, list[dict].
+
+    Raises:
+         RuntimeError: if type is not valid."""
+    if not _is_data_types_valid():
+        logging.warning("Data is busy")
+        raise RuntimeError("Cannot save data to json file. Data is busy")
 
 
 def load_data_to_ram_from_json_file() -> None:
@@ -105,14 +120,14 @@ def load_data_to_ram_from_json_file() -> None:
 
 
 def check_object_is_subclass_of_model(object_: BaseModel, model: type[BaseModel]) -> None:
-    """Raise RuntimeError if object is not subclass of model.
+    """Raise ValueError if object is not subclass of model.
 
     Raises:
-        RuntimeError
+        ValueError
     """
     if not issubclass(object_.__class__, model):
         logging.warning(f"Trying create object by invalid model. Got {object_.__class__}, expected {model}")
-        raise RuntimeError(f"Got an invalid model to create. Got {object_.__class__}, expected {model}")
+        raise ValueError(f"Got an invalid model to create. Got {object_.__class__}, expected {model}")
 
 
 def check_unique_of_field_in_catalog(value: any, field_name: str, catalog_name: str) -> None:
@@ -123,7 +138,7 @@ def check_unique_of_field_in_catalog(value: any, field_name: str, catalog_name: 
     """
     for element in _data[catalog_name]:
         if element[field_name] == value:
-            logging.info("Trying duplicate unique field value")
+            logging.warning("Trying duplicate unique field value")
             raise RuntimeError(f"Field {field_name} is unique. Got {value}, it isn't unique in {catalog_name}")
 
 
@@ -139,14 +154,14 @@ def _check_catalog_name_engaged(catalog_name: str) -> None:
 
 
 def _check_id_field_exist(element: dict):
-    """Raise RuntimeError if element have id field.
+    """Raise ValueError if element have id field.
 
     Raises:
-        RuntimeError
+        ValueError
     """
     if "id" in element.keys():
         logging.warning("Trying create element with id field")
-        raise RuntimeError("Element contains reserved field -- id.")
+        raise ValueError("Element contains reserved field -- id.")
 
 
 def _is_data_types_valid() -> bool:

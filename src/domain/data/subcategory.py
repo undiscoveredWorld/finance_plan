@@ -21,7 +21,8 @@ def add_subcategory(subcategory: SubcategoryCreate) -> None:
     """Add subcategory.
 
     Raises:
-        RuntimeError ValueError
+        RuntimeError
+        ValueError
     """
     check_object_is_subclass_of_model(subcategory, SubcategoryCreate)
     check_unique_of_field_in_catalog(
@@ -78,12 +79,12 @@ def clear_subcategories() -> None:
 
 
 def _check_category_exists(id_: int) -> None:
-    """Raise ValueError if category with that id does not exist.
+    """Raise RuntimeError if category with that id does not exist.
 
     Raises:
-        ValueError
+        RuntimeError
     """
     categories = list_categories()
     if id_ > len(categories):
         logging.warning("Trying link subcategory with not existing category")
-        raise ValueError("Trying link subcategory with not existing category")
+        raise RuntimeError("Trying link subcategory with not existing category")

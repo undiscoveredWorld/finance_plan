@@ -29,6 +29,13 @@ class CatalogTestCase(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             Catalog("Engaged_Catalog")
 
+    def test_create_catalog_with_busy_name(self):
+        with self.assertRaises(ValueError):
+            Catalog("")
+
+        with self.assertRaises(ValueError):
+            Catalog(1)
+
     def test_positive_list_catalog(self):
         result: List[Dict] = self.test_catalog.get_all_elements()
         self.assertTrue(isinstance(result, list))
@@ -60,7 +67,7 @@ class CatalogTestCase(unittest.TestCase):
         )
 
     def test_add_element_with_id_to_catalog(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             self.test_catalog.add_element(
                 {
                     "id": 100,
@@ -92,7 +99,7 @@ class CatalogTestCase(unittest.TestCase):
                 "name": "Original"
             }
         )
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             self.test_catalog.update_element(
                 0,
                 {
@@ -180,7 +187,7 @@ class OtherTestCase(unittest.TestCase):
             common.data._check_catalog_name_engaged("Engaged")
 
     def test_positive_check_id_field_exist(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             common.data._check_id_field_exist(
                 {
                     "id": 2,
@@ -227,11 +234,11 @@ class OtherTestCase(unittest.TestCase):
         check_object_is_subclass_of_model(c, C)
         check_object_is_subclass_of_model(c, B)
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             check_object_is_subclass_of_model(c, A)
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             check_object_is_subclass_of_model(b, A)
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             check_object_is_subclass_of_model(b, C)
 
     def test_positive_check_unique_of_field_in_catalog(self):

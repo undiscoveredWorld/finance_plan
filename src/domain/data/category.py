@@ -16,6 +16,7 @@ def add_category(category: CategoryCreate) -> None:
     """Add category.
 
     Raises:
+        ValueError
         RuntimeError
     """
     check_object_is_subclass_of_model(category, CategoryCreate)
@@ -45,13 +46,17 @@ def update_category(id_: int, new_category: CategoryUpdate) -> None:
     """Update category.
 
     Raises:
+        ValueError
         IndexError
+        RuntimeError
     """
     check_object_is_subclass_of_model(new_category, CategoryUpdate)
-    check_unique_of_field_in_catalog(
-        value=new_category.name,
-        field_name="name",
-        catalog_name=categories.get_catalog_name())
+    if categories.get_all_elements()[id_]["name"] != new_category.name:
+        check_unique_of_field_in_catalog(
+            value=new_category.name,
+            field_name="name",
+            catalog_name=categories.get_catalog_name()
+        )
     categories.update_element(id_, new_category.model_dump())
 
 
