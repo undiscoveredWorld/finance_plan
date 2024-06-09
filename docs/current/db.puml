@@ -8,11 +8,7 @@ entity Category {
 entity Subcategory {
     id: int <<PK>>
     name: str
-}
-
-entity Product {
-    id: int <<PK>>
-    name: str
+    category: Category <<FK>>
 }
 
 entity Buy {
@@ -20,12 +16,11 @@ entity Buy {
     date: Date
     category: Category <<FK>>
     subcategory: Subcategory <<FK>>
-    product: Product <<FK>>
 }
 
 
-Buy ||-down- Category
-Buy ||-down- Subcategory
-Buy ||-down- Product
+Category ||-o{ Subcategory
+Buy ||-down-o{ Category
+Buy ||-down-o{ Subcategory
 
 @enduml

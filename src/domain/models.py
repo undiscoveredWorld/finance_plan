@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+import datetime
 
-from common.date import Date
+from pydantic import BaseModel
 
 
 class CategoryBase(BaseModel):
@@ -18,7 +18,6 @@ class CategoryUpdate(CategoryBase):
 class Category(CategoryBase):
     id: int
     name: str
-    subcategories: list["Subcategory"]
 
     class Config:
         from_attributes = True
@@ -42,34 +41,53 @@ class Subcategory(SubcategoryBase):
     id: int
     name: str
     category_id: int
-    category: Category
 
     class Config:
         from_attributes = True
 
 
-class ProductBase(BaseModel):
-    name: str
-
-
-class ProductCreate(ProductBase):
-    ...
-
-
-class Product(ProductBase):
-    id: int
-
-
 class BuyBase(BaseModel):
-    date: Date
-    category: CategoryBase
-    subcategory: SubcategoryBase
-    product: ProductBase
+    product: str | None = None
+    date: datetime.date | None = None
+    sum: int | None = None
+    category_id: int | None = None
+    subcategory_id: int | None = None
 
 
 class BuyCreate(BuyBase):
+    product: str
+    date: datetime.date
+    category_id: int
+    subcategory_id: int
+    sum: int
+
+    def __init__(self,
+                 date: datetime.date,
+                 category_id: int,
+                 subcategory_id: int,
+                 product: str,
+                 sum_of_buy: int,
+                 ) -> None:
+        super().__init__(
+            product=product,
+            date=date,
+            category_id=category_id,
+            subcategory_id=subcategory_id,
+            sum=sum_of_buy,
+        )
+
+
+class BuyUpdate(BuyBase):
     ...
 
 
 class Buy(BuyBase):
     id: int
+    product: str
+    date: datetime.date
+    category_id: int
+    subcategory_id: int
+    sum: int
+
+    class Config:
+        from_attributes = True

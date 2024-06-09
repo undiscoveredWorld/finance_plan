@@ -2,7 +2,6 @@
 
 package Common {
     component [common.Data]
-    component [Date]
 }
 
 package Domain {
@@ -18,6 +17,5 @@ component [Main]
 [Main] -down-> [Models]
 [domain.Data] -right-> [Models]
 [domain.Data] -down-> [common.Data]
-[common.Data] -> [Date]
 
 @enduml

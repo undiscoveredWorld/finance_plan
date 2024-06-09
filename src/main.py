@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from end_points.category import category_router
 from end_points.subcategory import subcategory_router
+from end_points.buy import buy_router
 
 
 logging.basicConfig(level=logging.INFO)
@@ -13,6 +14,7 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 app.include_router(category_router)
 app.include_router(subcategory_router)
+app.include_router(buy_router)
 
 
 @app.exception_handler(TypeError)

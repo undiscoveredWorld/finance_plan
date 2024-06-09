@@ -3,7 +3,7 @@
 actor User
 
 User -down-> (CRUD)
-(CRUD) <.-down- (Sell) : extends
+(CRUD) <.-down- (Buy) : extends
 (CRUD) <.-down- (Category) : extends
 (CRUD) <.-down- (Subcategory) : extends
 (CRUD) <.-down- (Active) : extends

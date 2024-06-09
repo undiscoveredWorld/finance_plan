@@ -6,5 +6,6 @@ User -down-> (Save&load data)
 User -down-> (CRUD)
 (CRUD) <-down. (Category) : extends
 (CRUD) <-down. (Subcategory) : extends
+(CRUD) <-down. (Buy) : extends
 
 @enduml
