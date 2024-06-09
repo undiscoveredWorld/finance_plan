@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+alembic==1.13.1
+    # via -r requirements.in
 annotated-types==0.6.0
     # via pydantic
 anyio==4.3.0
@@ -16,6 +18,8 @@ dill==0.3.8
     # via pylint
 fastapi==0.110.1
     # via -r requirements.in
+greenlet==3.0.3
+    # via sqlalchemy
 h11==0.14.0
     # via uvicorn
 idna==3.6
@@ -24,6 +28,10 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via pylint
+mako==1.3.5
+    # via alembic
+markupsafe==2.1.5
+    # via mako
 mccabe==0.7.0
     # via pylint
 packaging==24.0
@@ -32,6 +40,10 @@ platformdirs==4.2.2
     # via pylint
 pluggy==1.5.0
     # via pytest
+psycopg[binary]==3.1.19
+    # via -r requirements.in
+psycopg-binary==3.1.19
+    # via psycopg
 pydantic==2.6.4
     # via
     #   -r requirements.in
@@ -48,14 +60,21 @@ python-dotenv==1.0.1
     # via -r requirements.in
 sniffio==1.3.1
     # via anyio
+sqlalchemy==2.0.30
+    # via
+    #   -r requirements.in
+    #   alembic
 starlette==0.37.2
     # via fastapi
 tomlkit==0.12.5
     # via pylint
 typing-extensions==4.11.0
     # via
+    #   alembic
     #   fastapi
+    #   psycopg
     #   pydantic
     #   pydantic-core
+    #   sqlalchemy
 uvicorn==0.29.0
     # via -r requirements.in

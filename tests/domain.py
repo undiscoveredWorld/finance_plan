@@ -1,9 +1,11 @@
 import unittest
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
+from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.orm import Session
 
+from common.data.db import Session
 from domain.models import (
     CategoryCreate,
-    Category,
     CategoryUpdate,
     SubcategoryCreate,
     Subcategory,
@@ -34,57 +36,72 @@ class DataCategoryTestCase(unittest.TestCase):
     def test_positive_add_category(self):
         add_category(CategoryCreate(name="test_category"))
         self.assertEqual(
-            [Category(id=0, name="test_category")],
-            list_categories()
+            1,
+            len(list_categories()),
+        )
+        self.assertEqual(
+            "test_category",
+            list_categories()[0].name,
         )
 
     def test_add_other_model_in_category_catalog(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             add_category(TestModel(name="test_category", description="test_category"))
+        with self.assertRaises(ValidationError):
+            add_category(Subcategory(name="test_subcategory"))
 
     def test_add_a_category_twice(self):
         add_category(CategoryCreate(name="test_category"))
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(IntegrityError):
             add_category(CategoryCreate(name="test_category"))
 
     def test_positive_list_categories(self):
         add_category(CategoryCreate(name="test_category"))
         self.assertEqual(
-            [Category(id=0, name="test_category")],
-            list_categories()
+            1,
+            len(list_categories()),
+        )
+        self.assertEqual(
+            "test_category",
+            list_categories()[0].name,
         )
 
     def test_positive_update_category(self):
-        add_category(CategoryCreate(name="test_category"))
-        update_category(0, CategoryUpdate(name="Updated"))
+        category_id = add_category(CategoryCreate(name="test_category"))
+        update_category(category_id, CategoryUpdate(name="Updated"))
         self.assertEqual(
-            [Category(id=0, name="Updated")],
-            list_categories()
+            1,
+            len(list_categories()),
+        )
+        self.assertEqual(
+            "Updated",
+            list_categories()[0].name,
         )
 
     def test_update_category_out_index(self):
-        with self.assertRaises(IndexError):
+        with self.assertRaises(NoResultFound):
             update_category(100, CategoryUpdate(name="Updated"))
 
     def test_update_category_name_on_engaged_name(self):
         add_category(CategoryCreate(name="Engaged"))
-        add_category(CategoryCreate(name="test_category"))
-        with self.assertRaises(RuntimeError):
-            update_category(1, CategoryUpdate(name="Engaged"))
+        category_id = add_category(CategoryCreate(name="test_category"))
+        with self.assertRaises(IntegrityError):
+            update_category(category_id, CategoryUpdate(name="Engaged"))
 
     def test_update_category_by_other_model(self):
-        add_category(CategoryCreate(name="test_category"))
-        with self.assertRaises(ValueError):
-            update_category(0, SubcategoryUpdate(name="Updated"))
+        category_id = add_category(CategoryCreate(name="test_category"))
+        with self.assertRaises(TypeError):
+            update_category(category_id, SubcategoryUpdate(name="Updated"))
+        with self.assertRaises(TypeError):
+            update_category(category_id, TestModel(name="56%45", description="test"))
 
     def test_positive_delete_category(self):
-        add_category(CategoryCreate(name="test_category"))
-        delete_category(0)
+        category_id = add_category(CategoryCreate(name="test_category"))
+        delete_category(category_id)
         self.assertEqual([], list_categories())
 
     def test_delete_category_out_index(self):
-        with self.assertRaises(IndexError):
-            delete_category(100)
+        delete_category(100)
 
     def test_positive_clear_categories(self):
         for i in range(10):
@@ -99,87 +116,107 @@ class DataCategoryTestCase(unittest.TestCase):
 
 class DataSubcategoryTest(unittest.TestCase):
     def test_positive_add_subcategory(self):
-        add_category(CategoryCreate(name="test_category"))
+        category_id = add_category(CategoryCreate(name="test_category"))
         add_subcategory(
-            SubcategoryCreate(name="test_subcategory", category_id=0)
+            SubcategoryCreate(name="test_subcategory", category_id=category_id)
         )
         self.assertEqual(
-            [Subcategory(id=0, name="test_subcategory", category_id=0)],
-            list_subcategories()
+            1,
+            len(list_subcategories())
+        )
+        self.assertEqual(
+            "test_subcategory",
+            list_subcategories()[0].name
+        )
+        self.assertEqual(
+            list_categories()[0].id,
+            list_subcategories()[0].category.id
+        )
+        self.assertEqual(
+            list_subcategories()[0].id,
+            list_categories()[0].subcategories[0].id
         )
 
     def test_add_other_model_in_subcategory_catalog(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             add_subcategory(TestModel(name="test_subcategory", description="test_subcategory"))
 
     def test_add_a_subcategory_twice(self):
-        add_category(CategoryCreate(name="Test Category"))
-        add_subcategory(SubcategoryCreate(name="test", category_id=0))
-        with self.assertRaises(RuntimeError):
+        category_id = add_category(CategoryCreate(name="Test Category"))
+        add_subcategory(SubcategoryCreate(name="test", category_id=category_id))
+        with self.assertRaises(IntegrityError):
             add_subcategory(SubcategoryCreate(name="test", category_id=0))
 
     def test_link_subcategory_to_not_exist_category(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(IntegrityError):
             add_subcategory(SubcategoryCreate(name="test", category_id=100))
 
     def test_positive_list_subcategories(self):
-        add_category(CategoryCreate(name="test_category"))
-        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
+        category_id = add_category(CategoryCreate(name="test_category"))
+        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
         self.assertEqual(
-            [Subcategory(id=0, name="test_subcategory", category_id=0)],
-            list_subcategories()
+            1,
+            len(list_subcategories())
+        )
+        self.assertEqual(
+            "test_subcategory",
+            list_subcategories()[0].name
+        )
+        self.assertEqual(
+            category_id,
+            list_subcategories()[0].category.id
+        )
+        self.assertEqual(
+            "test_category",
+            list_subcategories()[0].category.name
         )
 
     def test_positive_update_subcategory(self):
-        add_category(CategoryCreate(name="test_category"))
-        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
-        update_subcategory(0, SubcategoryUpdate(name="Updated"))
+        category_id = add_category(CategoryCreate(name="test_category"))
+        subcategory_id = add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
+        update_subcategory(subcategory_id, SubcategoryUpdate(name="Updated"))
         self.assertEqual(
-            [Subcategory(id=0, name="Updated", category_id=0)],
-            list_subcategories()
+            "Updated",
+            list_subcategories()[0].name
         )
 
     def test_update_subcategory_out_index(self):
-        with self.assertRaises(IndexError):
+        with self.assertRaises(NoResultFound):
             update_subcategory(100, SubcategoryUpdate(name="Updated"))
 
     def test_update_subcategory_name_on_engaged_name(self):
-        add_category(CategoryCreate(name="test_category"))
-        add_subcategory(SubcategoryCreate(name="Engaged", category_id=0))
-        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
-        with self.assertRaises(RuntimeError):
-            update_subcategory(1, SubcategoryUpdate(name="Engaged"))
+        category_id = add_category(CategoryCreate(name="test_category"))
+        add_subcategory(SubcategoryCreate(name="Engaged", category_id=category_id))
+        subcategory_id = add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
+        with self.assertRaises(IntegrityError):
+            update_subcategory(subcategory_id, SubcategoryUpdate(name="Engaged"))
 
     def test_update_subcategory_by_other_model(self):
-        add_category(CategoryCreate(name="test_category"))
-        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
-        with self.assertRaises(ValueError):
+        category_id = add_category(CategoryCreate(name="test_category"))
+        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
+        with self.assertRaises(TypeError):
             update_subcategory(0, CategoryUpdate(name="Updated"))
 
     def test_update_subcategory_link_to_category_on_not_existing_category(self):
-        add_category(CategoryCreate(name="test_category"))
-        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
-        with self.assertRaises(RuntimeError):
-            update_subcategory(0, SubcategoryUpdate(category_id=100))
+        category_id = add_category(CategoryCreate(name="test_category"))
+        subcategory_id = add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
+        with self.assertRaises(IntegrityError):
+            update_subcategory(subcategory_id, SubcategoryUpdate(category_id=100))
 
     def test_positive_delete_subcategory(self):
-        add_category(CategoryCreate(name="test_category"))
-        add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=0))
-        delete_subcategory(0)
+        category_id = add_category(CategoryCreate(name="test_category"))
+        subcaetgory_id = add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
+        delete_subcategory(subcaetgory_id)
         self.assertEqual([], list_subcategories())
 
-    def test_delete_subcategory_out_index(self):
-        with self.assertRaises(IndexError):
-            delete_subcategory(100)
-
     def test_positive_clear_subcategories(self):
-        add_category(CategoryCreate(name="test_category"))
+        category_id = add_category(CategoryCreate(name="test_category"))
         for i in range(10):
-            add_subcategory(SubcategoryCreate(name=f"{i}", category_id=0))
+            add_subcategory(SubcategoryCreate(name=f"{i}", category_id=category_id))
         clear_subcategories()
         self.assertEqual([], list_subcategories())
 
     def tearDown(self):
         super().tearDown()
-        clear_categories()
         clear_subcategories()
+        clear_categories()

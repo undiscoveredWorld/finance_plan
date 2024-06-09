@@ -1,81 +1,79 @@
 import logging
 
-from common.data.catalog import Catalog
+from sqlalchemy import select
+from sqlalchemy.orm import (
+    Session,
+)
+from sqlalchemy.exc import NoResultFound
+
 from common.data.utils import (
-    check_unique_of_field_in_catalog,
     check_object_is_subclass_of_model
+)
+from common.data.db import Session
+from common.data.db_models import (
+    Subcategory as DB_Subcategory
 )
 from domain.models import (
     SubcategoryCreate,
-    Subcategory,
     SubcategoryUpdate,
 )
 from domain.data.category import (
     list_categories,
 )
 
-subcategories = Catalog("Subcategories")
 
-
-def add_subcategory(subcategory: SubcategoryCreate) -> None:
-    """Add subcategory.
+def add_subcategory(subcategory: SubcategoryCreate) -> int:
+    """Add subcategory to db.
 
     Raises:
-        RuntimeError
-        ValueError
+        TypeError: if object is not subclass of model
     """
     check_object_is_subclass_of_model(subcategory, SubcategoryCreate)
-    check_unique_of_field_in_catalog(
-        value=subcategory.name,
-        field_name="name",
-        catalog_name=subcategories.get_catalog_name())
-    _check_category_exists(subcategory.category_id)
-    subcategories.add_element(subcategory.model_dump())
+
+    db_session: Session = Session()
+    new_subcategory = DB_Subcategory(**subcategory.model_dump())
+    db_session.add(new_subcategory)
+    db_session.commit()
+
+    return new_subcategory.id
 
 
-def list_subcategories() -> list[Subcategory]:
-    result_list: list[dict] = subcategories.get_all_elements()
-
-    # Convert list[dict] to list[Subcategory]
-    result_list: list[Subcategory] = list(
-        map(
-            Subcategory.model_validate,
-            result_list
-        )
-    )
-
-    return result_list
+def list_subcategories() -> list[type[DB_Subcategory]]:
+    db_session: Session = Session()
+    db_subcategories = db_session.query(DB_Subcategory).all()
+    return db_subcategories
 
 
 def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
-    """Update subcategory.
+    """Update subcategory in db.
 
     Raises:
-        ValueError
-        IndexError
-        RuntimeError
+        TypeError: if object is not subclass of model
+        NoResultFound: if id_ was not found in the db
+        IntegrityError: if category.name already exists
     """
     check_object_is_subclass_of_model(new_subcategory, SubcategoryUpdate)
-    check_unique_of_field_in_catalog(
-        value=new_subcategory.name,
-        field_name="name",
-        catalog_name=subcategories.get_catalog_name())
-    if new_subcategory.category_id is not None:
-        _check_category_exists(new_subcategory.category_id)
-    subcategories.update_element(id_, new_subcategory.model_dump())
+
+    db_session: Session = Session()
+    subcategory = db_session.execute(select(DB_Subcategory).filter_by(id=id_)).scalar_one()
+    if subcategory is None:
+        raise NoResultFound(f"Subcategory with id {id} was not found in db")
+
+    for key, value in new_subcategory.model_dump().items():
+        subcategory.__setattr__(key, value)
+    db_session.commit()
 
 
 def delete_subcategory(id_: int) -> None:
-    """Delete subcategory.
-
-    Raises:
-        IndexError
-    """
-    subcategories.delete_element(id_)
+    db_session: Session = Session()
+    db_session.query(DB_Subcategory).filter_by(id=id_).delete()
+    db_session.commit()
 
 
 def clear_subcategories() -> None:
-    subcategories.clear_catalog()
+    db_session: Session = Session()
+    db_session.query(DB_Subcategory).delete()
+    db_session.commit()
 
 
 def _check_category_exists(id_: int) -> None:

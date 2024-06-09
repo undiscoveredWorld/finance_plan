@@ -2,9 +2,8 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.exceptions import HTTPException
-from fastapi.responses import Response
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from common.data import save_data_to_json_file, load_data_to_ram_from_json_file
 from end_points.category import category_router
 from end_points.subcategory import subcategory_router
 
@@ -16,23 +15,7 @@ app.include_router(category_router)
 app.include_router(subcategory_router)
 
 
-@app.post("/save")
-async def save():
-    save_data_to_json_file()
-    return Response(status_code=200)
-
-
-@app.post("/load")
-async def load():
-    try:
-        load_data_to_ram_from_json_file()
-        return Response(status_code=200)
-    except FileNotFoundError:
-        logging.exception("FileNotFound")
-        return Response(status_code=422)
-
-
-@app.exception_handler(ValueError)
+@app.exception_handler(TypeError)
 async def value_error_handler(_, exc):
     raise HTTPException(
         detail=exc.args[0],
@@ -40,7 +23,7 @@ async def value_error_handler(_, exc):
     )
 
 
-@app.exception_handler(IndexError)
+@app.exception_handler(NoResultFound)
 async def index_error_handler(_, exc):
     raise HTTPException(
         detail=exc.args[0],
@@ -48,7 +31,7 @@ async def index_error_handler(_, exc):
     )
 
 
-@app.exception_handler(RuntimeError)
+@app.exception_handler(IntegrityError)
 async def runtime_error_handler(_, exc):
     raise HTTPException(
         detail=exc.args[0],

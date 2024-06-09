@@ -18,6 +18,10 @@ class CategoryUpdate(CategoryBase):
 class Category(CategoryBase):
     id: int
     name: str
+    subcategories: list["Subcategory"]
+
+    class Config:
+        from_attributes = True
 
 
 class SubcategoryBase(BaseModel):
@@ -38,6 +42,10 @@ class Subcategory(SubcategoryBase):
     id: int
     name: str
     category_id: int
+    category: Category
+
+    class Config:
+        from_attributes = True
 
 
 class ProductBase(BaseModel):
