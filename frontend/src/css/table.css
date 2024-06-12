@@ -1,0 +1,74 @@
+.buys-table {
+    align-items: end;
+}
+
+.buys-table button {
+    align-self: end;
+    margin-left: 22px;
+    margin-right: 22px;
+    width: auto;
+}
+
+.buys-table button:last-child {
+    margin-right: 0;
+}
+
+table, table tr, tr td {
+    border: 1px solid #000000;
+}
+
+tr.table-title {
+    background-color: var(--second-color);
+}
+
+.table-title h1 {
+    padding-bottom: 22px;
+    padding-top: 22px;
+}
+
+thead {
+    background-color: var(--main-color);
+}
+
+.table-header {
+}
+
+.table-header h2 {
+    padding: 15px;
+}
+
+.table-header-col[id="1"] {
+    column-width: 134px;
+    width: 134px;
+}
+
+.table-header-col[id="2"] {
+    column-width: 206px;
+    width: 206px;
+}
+
+.table-header-col[id="3"] {
+    column-width: 206px;
+    width: 206px;
+}
+
+.table-header-col[id="4"] {
+    column-width: 462px;
+    width: 462px;
+}
+
+.table-header-col[id="5"] {
+    column-width: 134px;
+    width: 134px;
+}
+
+tbody tr:nth-child(odd){
+    background-color: var(--table-row1);
+}
+tbody tr:nth-child(even){
+    background-color: var(--table-row2);
+}
+
+tr {
+    height: 49px;
+}

@@ -1,0 +1,31 @@
+* {
+    font-family: 'Inter regular', serif;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --main-color: #F4B56A;
+    --second-color: #E98888;
+    --table-row1: #FFE9D0;
+    --table-row2: #FFCF96;
+    --disabled-text: #818181;
+    --disabled-background: #FFE9D0;
+}
+
+h1 {
+    font-size: 48px
+}
+
+h2 {
+    font-size: 32px
+}
+
+h3 {
+    font-size: 24px
+}
+
+.container#main {
+    margin-top: 66px;
+    padding-bottom: 400px;
+}

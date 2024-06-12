@@ -1,0 +1,16 @@
+.main-menu-element-container {
+    background-color: var(--main-color);
+    border: 1px solid #000;
+    padding-left: 100px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.main-menu > .main-menu-element {
+    margin-top: 0;
+}
+
+.main-menu > .main-menu-element ~ .main-menu-element {
+    margin-top: 43px;
+}
+

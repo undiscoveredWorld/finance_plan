@@ -1,0 +1,14 @@
+button {
+    border: 1px solid #000;
+    background-color: var(--main-color);
+    padding: 8px 65px;
+}
+
+button:disabled {
+    background-color: var(--disabled-background);
+    color: var(--disabled-text);
+}
+
+button h3 {
+    padding: 0;
+}
