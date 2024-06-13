@@ -27,5 +27,15 @@ h3 {
 
 .container#main {
     margin-top: 66px;
-    padding-bottom: 400px;
+    padding-bottom: 200px;
 }
+
+.clickable {
+    transition: all .3s ease-in-out;
+}
+
+.clickable:hover {
+    transform: scale(1.065);
+    cursor: pointer;
+}
+

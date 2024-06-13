@@ -17,6 +17,11 @@ table, table tr, tr td {
     border: 1px solid #000000;
 }
 
+table td {
+    font-size: 20px;
+    text-align: center;
+}
+
 tr.table-title {
     background-color: var(--second-color);
 }

@@ -1,6 +1,7 @@
 import TableRow from "./TableRow";
 
-const Table = () => {
+const Table = ({rows}) => {
+    const listRows = rows.map(row => <TableRow {...row}/>)
     return <table className="w-100">
         <thead>
             <tr className="table-title">
@@ -15,8 +16,7 @@ const Table = () => {
             </tr>
         </thead>
         <tbody>
-            <TableRow />
-            <TableRow />
+        {listRows}
         </tbody>
         <tbody>
         </tbody>

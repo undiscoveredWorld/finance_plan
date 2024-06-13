@@ -1,4 +1,5 @@
 import {createRoot} from "react-dom/client";
+import {useState} from "react";
 
 import './css/common.css'
 import './css/header.css'
@@ -7,28 +8,39 @@ import './css/table.css'
 import './css/button.css'
 
 import Header from './components/Header'
-import MainMenuElement from "./components/MainMenuElement";
-import Table from "./components/Table";
-import Button from "./components/Button";
+import MainMenu from "./components/MainMenu";
+import Buys from "./components/Buys";
 
 const App = () => {
-    return <>
-<Header />
-<div className="container pt-0 px-0" id="main">
-    <div className="main-menu">
-        <MainMenuElement name="Buys"/>
-        <MainMenuElement name="Reports"/>
-    </div>
-    <div className="buys-table d-flex flex-nowrap w-100 my-4">
-        <div className="col w-100"></div>
-        <h2>Select the row</h2>
-        <Button name="Edit"/>
-        <Button name="Delete"/>
-        <Button name="Cancel" enabled={false}/>
-    </div>
-    <Table />
-</div>
+    const [openedMenu, setOpenedMenu] = useState("Main menu")
+    const [rows, setRows] = useState([{date: "6/13/2024"}, {}])
+
+    const openBuys = () => {
+        setOpenedMenu("Buys")
+    }
+
+    const openMainMenu = () => {
+        setOpenedMenu("Main menu")
+    }
+
+    let body = <>
+        <Header titleOnClick={openMainMenu} buysOnClick={openBuys}/>
     </>
+
+    if (openedMenu === "Main menu") {
+        body = <>{body}
+            <div className="container pt-0 px-0" id="main">
+               <MainMenu buysOnClick={openBuys}/>
+            </div>
+        </>
+    } else if(openedMenu === "Buys") {
+        body = <>{body}
+            <div className="container pt-0 px-0" id="main">
+                <Buys rows={rows}/>
+            </div>
+        </>
+    }
+    return <>{body}</>
 }
 
 const root = createRoot(document.getElementById('app'))
