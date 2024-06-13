@@ -32,8 +32,8 @@ def ask_variable(variable_name: str, default: any = None) -> str:
 if __name__ == "__main__":
     body = ask_docker_variables()
 
-    with open("./src/docker.env", "w") as file:
+    with open("./backend/src/docker.env", "w") as file:
         file.write(body)
 
-    with open("./tests/docker.env", "w") as file:
+    with open("./backend/tests/docker.env", "w") as file:
         file.write(body)
