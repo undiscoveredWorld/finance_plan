@@ -1,5 +1,6 @@
 import {createRoot} from "react-dom/client";
 import {useState} from "react";
+import {useEffect} from "react";
 
 import './css/common.css'
 import './css/header.css'
@@ -13,7 +14,6 @@ import Buys from "./components/Buys";
 
 const App = () => {
     const [openedMenu, setOpenedMenu] = useState("Main menu")
-    const [rows, setRows] = useState([{date: "6/13/2024"}, {}])
 
     const openBuys = () => {
         setOpenedMenu("Buys")
@@ -30,13 +30,13 @@ const App = () => {
     if (openedMenu === "Main menu") {
         body = <>{body}
             <div className="container pt-0 px-0" id="main">
-               <MainMenu buysOnClick={openBuys}/>
+                <MainMenu buysOnClick={openBuys}/>
             </div>
         </>
-    } else if(openedMenu === "Buys") {
+    } else if (openedMenu === "Buys") {
         body = <>{body}
             <div className="container pt-0 px-0" id="main">
-                <Buys rows={rows}/>
+                <Buys />
             </div>
         </>
     }
@@ -44,4 +44,4 @@ const App = () => {
 }
 
 const root = createRoot(document.getElementById('app'))
-root.render(<App />)
+root.render(<App/>)

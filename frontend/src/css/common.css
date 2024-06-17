@@ -1,5 +1,6 @@
 * {
-    font-family: 'Inter regular', serif;
+    font-family: 'Inter regular', serif !important;
+
     margin: 0;
     padding: 0;
 }
@@ -25,11 +26,6 @@ h3 {
     font-size: 24px
 }
 
-.container#main {
-    margin-top: 66px;
-    padding-bottom: 200px;
-}
-
 .clickable {
     transition: all .3s ease-in-out;
 }
@@ -39,3 +35,7 @@ h3 {
     cursor: pointer;
 }
 
+.container#main {
+    margin-top: 66px;
+    padding-bottom: 200px;
+}

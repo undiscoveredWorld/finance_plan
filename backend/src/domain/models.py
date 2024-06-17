@@ -66,14 +66,14 @@ class BuyCreate(BuyBase):
                  category_id: int,
                  subcategory_id: int,
                  product: str,
-                 sum_of_buy: int,
+                 sum: int,
                  ) -> None:
         super().__init__(
             product=product,
             date=date,
             category_id=category_id,
             subcategory_id=subcategory_id,
-            sum=sum_of_buy,
+            sum=sum,
         )
 
 
@@ -88,6 +88,9 @@ class Buy(BuyBase):
     category_id: int
     subcategory_id: int
     sum: int
+
+    category: Category
+    subcategory: Subcategory
 
     class Config:
         from_attributes = True

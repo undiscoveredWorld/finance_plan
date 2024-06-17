@@ -1,56 +1,50 @@
 import Button from "./Button";
 
-const ControlPanel = (
+const DefaultControlPanel = (
     {
-        mode = "default",
-        editOnClick = () => {},
-        cancelOnClick = () => {}
+        editOnClick = () => {
+        }
     }) => {
-    let message = <></>
-    if (mode === "edit" || mode === "delete") {
-        message = <h2>Select the row</h2>
-    }
-
-
     return <div className="buys-table d-flex flex-nowrap w-100 my-4">
         <div className="col w-100"></div>
-        {message}
-        <EditButton mode={mode} editOnClick={editOnClick}/>
+        <Button name="Edit" onClick={editOnClick}/>
         <Button name="Delete"/>
-        <CancelButton mode={mode} cancelOnClick={cancelOnClick}/>
     </div>
 }
 
-const EditButton = (
+const SubmitControlPanel = (
     {
-        mode = "default",
-        editOnClick = () => {}
+        cancelOnClick = () => {
+        }
     }) => {
-    let editButton = <></>
-
-    if (mode === "default") {
-        editButton = <Button name="Edit" onClick={editOnClick}/>
-    } else if (mode === "edit") {
-        editButton = <Button name="Save" onClick={editOnClick}/>
-    }
-
-    return editButton
+    return <div className="buys-table d-flex flex-nowrap w-100 my-4">
+        <div className="col w-100"></div>
+        <h2>Select row</h2>
+        <Button name="Save"/>
+        <Button name="Cancel" onClick={cancelOnClick}/>
+    </div>
 }
 
-const CancelButton = (
-    {
-        mode = "default",
-        cancelOnClick = () => {}
-    }) => {
-    let cancelButton
+class ControlPanelManager {
+    constructor(mode, setterMode) {
+        this.mode = mode
+        this.setterMode = (new_mode) => {
+            setterMode(new_mode)
+            this.mode = new_mode
+        }
 
-    if (mode === "default") {
-        cancelButton = <Button name="Cancel" enabled={false}/>
-    } else {
-        cancelButton = <Button name="Cancel" enabled={true} onClick={cancelOnClick}/>
+        this.editOnClick = () => {
+            this.setterMode("edit")
+        }
+        this.cancelOnClick = () =>{
+            this.setterMode("default")
+        }
     }
 
-    return cancelButton
+    get controlPanel() {
+        if (this.mode === "default") return <DefaultControlPanel editOnClick={this.editOnClick}/>
+        else if (this.mode === "edit") return <SubmitControlPanel cancelOnClick={this.cancelOnClick}/>
+    }
 }
 
-export default ControlPanel
+export default ControlPanelManager

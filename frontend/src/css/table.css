@@ -17,9 +17,8 @@ table, table tr, tr td {
     border: 1px solid #000000;
 }
 
-table td {
-    font-size: 20px;
-    text-align: center;
+thead {
+    background-color: var(--main-color);
 }
 
 tr.table-title {
@@ -31,40 +30,16 @@ tr.table-title {
     padding-top: 22px;
 }
 
-thead {
-    background-color: var(--main-color);
-}
-
-.table-header {
-}
-
 .table-header h2 {
     padding: 15px;
 }
 
-.table-header-col[id="1"] {
-    column-width: 134px;
-    width: 134px;
+input{
+    width: 100%;
 }
 
-.table-header-col[id="2"] {
-    column-width: 206px;
-    width: 206px;
-}
-
-.table-header-col[id="3"] {
-    column-width: 206px;
-    width: 206px;
-}
-
-.table-header-col[id="4"] {
-    column-width: 462px;
-    width: 462px;
-}
-
-.table-header-col[id="5"] {
-    column-width: 134px;
-    width: 134px;
+tr {
+    height: fit-content;
 }
 
 tbody tr:nth-child(odd){
@@ -74,6 +49,22 @@ tbody tr:nth-child(even){
     background-color: var(--table-row2);
 }
 
-tr {
-    height: 49px;
+td {
+    font-size: 20px;
+    background-color: transparent;
+
+    height: fit-content;
+    text-align: center;
+}
+
+td input {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    border: none;
+    text-align: center;
+}
+
+td h2 {
+    margin: 0;
 }
