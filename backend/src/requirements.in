@@ -8,3 +8,6 @@ python-dotenv
 pytest
 pylint
 pydoctest
+pandas
+openpyxl
+python-multipart

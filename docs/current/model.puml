@@ -9,7 +9,6 @@ package Domain {
     component [domain.Data]
 }
 
-component [Web UI]
 component [Main]
 
 

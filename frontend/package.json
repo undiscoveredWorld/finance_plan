@@ -3,7 +3,8 @@
     "axios": "^1.7.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "react-table-lite": "^3.0.3"
   },
   "scripts": {
     "start": "BROWSER=None react-scripts start",

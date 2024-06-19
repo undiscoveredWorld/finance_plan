@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from end_points.category import category_router
 from end_points.subcategory import subcategory_router
 from end_points.buy import buy_router
+from end_points.import_data import import_data_router
 
 origins = ["http://5.35.88.46:3000"]
 
@@ -17,6 +18,7 @@ app = FastAPI()
 app.include_router(category_router)
 app.include_router(subcategory_router)
 app.include_router(buy_router)
+app.include_router(import_data_router)
 
 app.add_middleware(
     CORSMiddleware,

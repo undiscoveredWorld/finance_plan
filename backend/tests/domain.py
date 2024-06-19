@@ -1,5 +1,6 @@
 import datetime
 import unittest
+
 from pydantic import BaseModel, ValidationError
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
@@ -11,7 +12,7 @@ from domain.models import (
     SubcategoryUpdate,
     BuyCreate,
     BuyUpdate,
-    Buy
+    Category,
 )
 from domain.data.category import (
     add_category,
@@ -33,6 +34,12 @@ from domain.data.buy import (
     update_buy,
     delete_buy,
     clear_buys,
+)
+from domain.data.import_buys import (
+    _ImportResolver,
+    _get_date_from_str,
+    _read_ranges,
+    _create_buys_from_rows
 )
 
 
@@ -369,6 +376,133 @@ class DataBuyTest(unittest.TestCase):
 
         clear_buys()
         self.assertEqual([], list_buys())
+
+    def tearDown(self):
+        super().tearDown()
+        clear_buys()
+        clear_subcategories()
+        clear_categories()
+
+
+class ImportBuysTest(unittest.TestCase):
+    categories: list[type[Category]]
+    subcategories: list[type[Subcategory]]
+    import_resolver: _ImportResolver
+
+    def test_positive_get_id_category_by_name(self):
+        add_category(CategoryCreate(name="test_category"))
+        self._update_lists()
+        self.assertEqual(
+            self.categories[0].id,
+            self.import_resolver.get_id_category_by_name_or_create_it(self.categories[0].name)
+        )
+
+    def test_positive_create_category_if_it_not_exists(self):
+        self.import_resolver.get_id_category_by_name_or_create_it("New")
+        categories = list_categories()
+        self.assertEqual(
+            1,
+            len(categories)
+        )
+
+    def test_positive_get_id_subcategory_by_name(self):
+        category_id = add_category(CategoryCreate(name="test_category"))
+        add_subcategory(SubcategoryCreate(name="test_category", category_id=category_id))
+        self._update_lists()
+        self.assertEqual(
+            self.subcategories[0].id,
+            self.import_resolver.get_id_subcategory_by_name_or_create_it(self.categories[0].id, self.subcategories[0].name)
+        )
+
+    def test_positive_create_subcategory_if_it_not_exists(self):
+        add_category(CategoryCreate(name="New"))
+        add_category(CategoryCreate(name="New2"))
+        self._update_lists()
+        self.import_resolver.get_id_subcategory_by_name_or_create_it(self.categories[0].id, "sdf")
+        self.import_resolver.get_id_subcategory_by_name_or_create_it(self.categories[1].id, "sdf")
+        subcategories = list_subcategories()
+        self.assertEqual(
+            2,
+            len(subcategories)
+        )
+
+    def test_negative_invalid_args(self):
+        with self.assertRaises(ValidationError):
+            self.import_resolver.get_id_category_by_name_or_create_it(5)
+        with self.assertRaises(ValidationError):
+            self.import_resolver.get_id_subcategory_by_name_or_create_it("", 5)
+
+    def test_negative_create_subcategory_if_category_id_does_not_exist(self):
+        with self.assertRaises(IntegrityError):
+            self.import_resolver.get_id_subcategory_by_name_or_create_it(100, "name")
+
+    def test_positive_does_category_id_exist(self):
+        self.assertFalse(self.import_resolver._is_category_id_exist(100))
+        self.import_resolver._is_category_id_exist(100)
+        category_id = add_category(CategoryCreate(name="test_category"))
+        self._update_lists()
+        self.assertTrue(self.import_resolver._is_category_id_exist(category_id))
+
+    def test_positive_get_date_from_str(self):
+        date_str = "2021-01-01T00:00:00"
+        self.assertEqual(
+            datetime.date(2021, 1, 1),
+            _get_date_from_str(date_str)
+        )
+        date_str = "2021/01/01"
+        self.assertEqual(
+            datetime.date(2021, 1, 1),
+            _get_date_from_str(date_str)
+        )
+
+    def test_negative_get_date_from_str(self):
+        with self.assertRaises(TypeError):
+            _get_date_from_str(1)
+        with self.assertRaises(Exception):
+            _get_date_from_str("----")
+
+    def test_positive_read_ranges(self):
+        rows = _read_ranges("Sheet1", ["A1:B1", "A1:A2"], "./test_read_range.xlsx")
+        self.assertEqual(
+            [['5', 'string'], ['5'], ['']],
+            rows
+        )
+
+    def test_negative_read_ranges_with_invalid_args(self):
+        with self.assertRaises(TypeError):
+            _read_ranges(1, 1, 1)
+        with self.assertRaises(KeyError):
+            _read_ranges("1", ["A1:B1"], "./test_read_range.xlsx")
+        with self.assertRaises(Exception):
+            _read_ranges("Sheet1", ["A1:B1"], "./not")
+
+    def test_positive_create_buys_from_rows(self):
+        rows = [["2021-01-01", "Food", "At home", "Bread", "35"]]
+        _create_buys_from_rows(rows)
+        buys = list_buys()
+        self.assertEqual(1, len(buys))
+
+    def test_create_buys_from_busy_rows(self):
+        with self.assertRaises(Exception):
+            rows = [["Food", "At home", "Bread", "35", "sdf"]]
+            _create_buys_from_rows(rows)
+        with self.assertRaises(Exception):
+            rows = [["2021-01-01", "Food", "At home", ""]]
+            _create_buys_from_rows(rows)
+        with self.assertRaises(Exception):
+            rows = [[3]]
+            _create_buys_from_rows(rows)
+
+
+
+    def _update_lists(self):
+        self.categories = list_categories()
+        self.subcategories = list_subcategories()
+        self.import_resolver = _ImportResolver(self.categories, self.subcategories)
+
+    def setUp(self):
+        super().setUp()
+        self._update_lists()
 
     def tearDown(self):
         super().tearDown()

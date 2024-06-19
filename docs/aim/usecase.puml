@@ -13,4 +13,7 @@ User -down-> (Reports)
 (Reports) <.-down- (Daily expenses) : extends
 (Reports) <.-down- (Monthly expenses) : extends
 
+User -down-> (Import)
+(Import) <.-down- (Buys) : extends
+
 @enduml

@@ -16,6 +16,8 @@ click==8.1.7
     # via uvicorn
 dill==0.3.8
     # via pylint
+et-xmlfile==1.1.0
+    # via openpyxl
 fastapi==0.110.1
     # via -r requirements.in
 greenlet==3.0.3
@@ -34,8 +36,14 @@ markupsafe==2.1.5
     # via mako
 mccabe==0.7.0
     # via pylint
+numpy==2.0.0
+    # via pandas
+openpyxl==3.1.4
+    # via -r requirements.in
 packaging==24.0
     # via pytest
+pandas==2.2.2
+    # via -r requirements.in
 platformdirs==4.2.2
     # via pylint
 pluggy==1.5.0
@@ -56,8 +64,16 @@ pylint==3.2.2
     # via -r requirements.in
 pytest==8.2.1
     # via -r requirements.in
+python-dateutil==2.9.0.post0
+    # via pandas
 python-dotenv==1.0.1
     # via -r requirements.in
+python-multipart==0.0.9
+    # via -r requirements.in
+pytz==2024.1
+    # via pandas
+six==1.16.0
+    # via python-dateutil
 sniffio==1.3.1
     # via anyio
 sqlalchemy==2.0.30
@@ -76,5 +92,7 @@ typing-extensions==4.11.0
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
+tzdata==2024.1
+    # via pandas
 uvicorn==0.29.0
     # via -r requirements.in

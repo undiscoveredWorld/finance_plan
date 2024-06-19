@@ -8,4 +8,7 @@ User -down-> (CRUD)
 (CRUD) <-down. (Subcategory) : extends
 (CRUD) <-down. (Buy) : extends
 
+User -down-> (Import)
+(Import) <.-down- (Buys) : extends
+
 @enduml
