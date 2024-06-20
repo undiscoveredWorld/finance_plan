@@ -33,6 +33,19 @@ def add_buy(buy: BuyCreate) -> int:
     return new_buy.id
 
 
+def generate_multiple_adding_buy() -> (callable, callable):
+    db_session: Session = get_session()
+
+    def add_one_buy(buy: BuyCreate) -> int:
+        check_object_is_subclass_of_model(buy, BuyCreate)
+        new_buy = DB_Buy(**buy.model_dump())
+        db_session.add(new_buy)
+        db_session.flush()
+        return new_buy.id
+
+    return add_one_buy, db_session.commit
+
+
 @redis_cache_list_models("Buys")
 def list_buys() -> list[Buy]:
     db_session: Session = get_session()

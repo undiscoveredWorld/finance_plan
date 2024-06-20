@@ -10,9 +10,10 @@ from common.data.import_data import (
     read_range_from_sheet,
     open_sheet
 )
+from common.cache.redis_connect import invalidate_key
 from domain.data.category import list_categories, add_category
 from domain.data.subcategory import list_subcategories, add_subcategory
-from domain.data.buy import add_buy
+from domain.data.buy import generate_multiple_adding_buy
 from domain.models import (
     Category,
     Subcategory,
@@ -41,6 +42,7 @@ class _ImportResolver:
             if category.name == category_name:
                 return category.id
         id_ = add_category(CategoryCreate(name=category_name))
+        self.categories = list_categories()
         return id_
 
     def get_id_subcategory_by_name_or_create_it(self, parent_category_id: int, subcategory_name: str) -> int:
@@ -53,6 +55,7 @@ class _ImportResolver:
                 return subcategory.id
 
         id_ = add_subcategory(SubcategoryCreate(name=subcategory_name, category_id=parent_category_id))
+        self.subcategories = list_subcategories()
         return id_
 
     def _is_category_id_exist(self, category_id: int) -> bool:
@@ -90,6 +93,7 @@ def _create_buys_from_rows(rows: list[list[str]]):
     Side effect: created buy will add to db
     """
     import_resolver = _get_import_resolver()
+    add_buy, commit = generate_multiple_adding_buy()
     for row in rows:
         category_id = import_resolver.get_id_category_by_name_or_create_it(row[1])
         subcategory_id = import_resolver.get_id_subcategory_by_name_or_create_it(category_id, row[2])
@@ -101,10 +105,18 @@ def _create_buys_from_rows(rows: list[list[str]]):
             sum=int(ast.literal_eval(row[4]))
         ))
 
+    commit()
+
 
 def import_buys(sheet_name: str, ranges: list[str], file: UploadFile):
     path_to_file = "/tmp/got_file.xlsx"
     create_uploaded_file(file, path_to_file)
     rows = _read_ranges(sheet_name, ranges, path_to_file)
+    _invalidate_cache()
     _create_buys_from_rows(rows)
     os.remove(path_to_file)
+
+
+def _invalidate_cache():
+    invalidate_key("categories")
+    invalidate_key("Subcategories")
