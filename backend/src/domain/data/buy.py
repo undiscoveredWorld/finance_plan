@@ -5,12 +5,18 @@ from sqlalchemy.exc import NoResultFound
 from common.data.utils import check_object_is_subclass_of_model
 from common.data.db import get_session
 from common.data.db_models import Buy as DB_Buy
+from common.cache.function_cache import (
+    invalidate_cache_by_call,
+    redis_cache_list_models,
+)
 from domain.models import (
     BuyCreate,
     BuyUpdate,
+    Buy,
 )
 
 
+@invalidate_cache_by_call("Buys")
 def add_buy(buy: BuyCreate) -> int:
     """Add buy to db.
 
@@ -27,12 +33,31 @@ def add_buy(buy: BuyCreate) -> int:
     return new_buy.id
 
 
-def list_buys() -> list[type[DB_Buy]]:
+@redis_cache_list_models("Buys")
+def list_buys() -> list[Buy]:
     db_session: Session = get_session()
     db_buys = db_session.query(DB_Buy).all()
-    return db_buys
+    buys = _convert_db_buys_to_buys(db_buys)
+    return buys
 
 
+def _convert_db_buys_to_buys(db_buys):
+    result = []
+    for buy in db_buys:
+        result.append(Buy(
+            id=buy.id,
+            product=buy.product,
+            category_id=buy.category_id,
+            subcategory_id=buy.subcategory_id,
+            date=buy.date,
+            sum=buy.sum,
+            category=buy.category,
+            subcategory=buy.subcategory
+        ))
+    return result
+
+
+@invalidate_cache_by_call("Buys")
 def update_buy(id_: int, new_buy: BuyUpdate) -> None:
     """Update buy in db.
 
@@ -54,6 +79,7 @@ def update_buy(id_: int, new_buy: BuyUpdate) -> None:
     db_session.commit()
 
 
+@invalidate_cache_by_call("Buys")
 def delete_buy(id_: int) -> None:
     """Delete buy."""
     db_session: Session = get_session()
@@ -61,6 +87,7 @@ def delete_buy(id_: int) -> None:
     db_session.commit()
 
 
+@invalidate_cache_by_call("Buys")
 def clear_buys() -> None:
     db_session: Session = get_session()
     db_session.query(DB_Buy).delete()

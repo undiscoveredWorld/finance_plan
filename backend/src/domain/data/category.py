@@ -8,9 +8,13 @@ from common.data.db_models import Category as DB_Category
 from domain.models import (
     CategoryCreate,
     CategoryUpdate,
+    Category,
 )
+from common.cache.function_cache import redis_cache_list_models, invalidate_cache_by_call
+from common.data.utils import convert_return_to_list_of_model
 
 
+@invalidate_cache_by_call("categories")
 def add_category(category: CategoryCreate) -> int:
     """Add category to db.
 
@@ -27,12 +31,15 @@ def add_category(category: CategoryCreate) -> int:
     return new_category.id
 
 
+@redis_cache_list_models("categories")
+@convert_return_to_list_of_model(Category)
 def list_categories() -> list[type[DB_Category]]:
     db_session: Session = get_session()
     db_categories = db_session.query(DB_Category).all()
     return db_categories
 
 
+@invalidate_cache_by_call("categories")
 def update_category(id_: int, new_category: CategoryUpdate) -> None:
     """Update category in db.
 
@@ -55,6 +62,7 @@ def update_category(id_: int, new_category: CategoryUpdate) -> None:
     db_session.commit()
 
 
+@invalidate_cache_by_call("categories")
 def delete_category(id_: int) -> None:
     """Delete category."""
     db_session: Session = get_session()
@@ -62,6 +70,7 @@ def delete_category(id_: int) -> None:
     db_session.commit()
 
 
+@invalidate_cache_by_call("categories")
 def clear_categories() -> None:
     db_session: Session = get_session()
     db_session.query(DB_Category).delete()

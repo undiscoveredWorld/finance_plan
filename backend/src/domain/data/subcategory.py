@@ -11,12 +11,19 @@ from common.data.db import get_session
 from common.data.db_models import (
     Subcategory as DB_Subcategory
 )
+from common.data.utils import convert_return_to_list_of_model
+from common.cache.function_cache import (
+    invalidate_cache_by_call,
+    redis_cache_list_models,
+)
 from domain.models import (
     SubcategoryCreate,
     SubcategoryUpdate,
+    Subcategory
 )
 
 
+@invalidate_cache_by_call("Subcategories")
 def add_subcategory(subcategory: SubcategoryCreate) -> int:
     """Add subcategory to db.
 
@@ -33,12 +40,15 @@ def add_subcategory(subcategory: SubcategoryCreate) -> int:
     return new_subcategory.id
 
 
-def list_subcategories() -> list[type[DB_Subcategory]]:
+@redis_cache_list_models("Subcategories")
+@convert_return_to_list_of_model(Subcategory)
+def list_subcategories() -> list[type[Subcategory]]:
     db_session: Session = get_session()
     db_subcategories = db_session.query(DB_Subcategory).all()
     return db_subcategories
 
 
+@invalidate_cache_by_call("Subcategories")
 def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
     """Update subcategory in db.
 
@@ -60,12 +70,14 @@ def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
     db_session.commit()
 
 
+@invalidate_cache_by_call("Subcategories")
 def delete_subcategory(id_: int) -> None:
     db_session: Session = get_session()
     db_session.query(DB_Subcategory).filter_by(id=id_).delete()
     db_session.commit()
 
 
+@invalidate_cache_by_call("Subcategories")
 def clear_subcategories() -> None:
     db_session: Session = get_session()
     db_session.query(DB_Subcategory).delete()

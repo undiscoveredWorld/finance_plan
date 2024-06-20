@@ -21,3 +21,22 @@ def create_uploaded_file(file: UploadFile, path_to_file: str):
     contents = file.file.read()
     with open(path_to_file, "wb") as f:
         f.write(contents)
+
+
+def convert_return_to_list_of_model(model: type[BaseModel]) -> callable:
+    """Convert return to list of model.
+
+    To use func must return list of objects with properties as like as model.
+    Don't work with DB Models, that have from_attributes fields.
+
+    Returns: decorator, that converts the return to list of model
+    """
+    def decorator(func: callable) -> callable:
+        def inner_func(*_args, **_kwargs) -> list[model]:
+            func_result: list = func(*_args, **_kwargs)
+            func_result_model: list[model] = []
+            for f in func_result:
+                func_result_model.append(model.model_validate(f.__dict__))
+            return func_result_model
+        return inner_func
+    return decorator

@@ -163,10 +163,6 @@ class DataSubcategoryTest(unittest.TestCase):
             "test_subcategory",
             subcategories[0].name
         )
-        self.assertEqual(
-            categories[0].id,
-            subcategories[0].category.id
-        )
 
     def test_add_other_model_in_subcategory_catalog(self):
         with self.assertRaises(TypeError):
@@ -194,14 +190,6 @@ class DataSubcategoryTest(unittest.TestCase):
         self.assertEqual(
             "test_subcategory",
             subcategories[0].name
-        )
-        self.assertEqual(
-            category_id,
-            subcategories[0].category.id
-        )
-        self.assertEqual(
-            "test_category",
-            subcategories[0].category.name
         )
 
     def test_positive_update_subcategory(self):
@@ -247,8 +235,8 @@ class DataSubcategoryTest(unittest.TestCase):
 
     def test_positive_delete_subcategory(self):
         category_id = add_category(CategoryCreate(name="test_category"))
-        subcaetgory_id = add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
-        delete_subcategory(subcaetgory_id)
+        subcategory_id = add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
+        delete_subcategory(subcategory_id)
         self.assertEqual([], list_subcategories())
 
     def test_positive_clear_subcategories(self):

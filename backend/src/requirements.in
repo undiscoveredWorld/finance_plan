@@ -11,3 +11,4 @@ pydoctest
 pandas
 openpyxl
 python-multipart
+redis

@@ -4,6 +4,7 @@ import os
 
 from dateutil.parser import parse
 from fastapi import UploadFile
+from functools import lru_cache
 
 from common.data.import_data import (
     read_range_from_sheet,
@@ -61,6 +62,7 @@ class _ImportResolver:
         return False
 
 
+@lru_cache
 def _get_date_from_str(date_str: str) -> datetime.date:
     return parse(date_str).date()
 
@@ -85,7 +87,7 @@ def _get_import_resolver() -> _ImportResolver:
 def _create_buys_from_rows(rows: list[list[str]]):
     """Create buys from rows.
 
-    Side effect: created buy will added to db
+    Side effect: created buy will add to db
     """
     import_resolver = _get_import_resolver()
     for row in rows:
