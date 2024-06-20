@@ -17,21 +17,21 @@ category_router = APIRouter(
 )
 
 
-@category_router.get("/list_categories", response_model=list[Category])
+@category_router.get("/categories", response_model=list[Category])
 async def list_categories_router() -> list[Category]:
     return list_categories()
 
 
-@category_router.post("/create_category")
+@category_router.post("/category")
 async def create_category_router(category_create: CategoryCreate):
     add_category(category_create)
 
 
-@category_router.put("/update_category")
+@category_router.put("/category")
 async def update_category_router(id_: int, category_update: CategoryUpdate):
     update_category(id_, category_update)
 
 
-@category_router.delete("/delete_category")
+@category_router.delete("/category")
 async def delete_category_router(id_: int):
     delete_category(id_)
