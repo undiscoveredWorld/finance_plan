@@ -94,3 +94,23 @@ class Buy(BuyBase):
 
     class Config:
         from_attributes = True
+
+
+class ReportsConfigBase(BaseModel):
+    start_day: datetime.date | None
+    expected_expenses_per_day: int | None
+
+
+class ReportsConfigCreate(ReportsConfigBase):
+    start_day: datetime.date
+    expected_expenses_per_day: int
+
+
+class ReportsConfigUpdate(ReportsConfigBase):
+    ...
+
+
+class ReportsConfig(ReportsConfigBase):
+    id: int
+    start_date: datetime.date
+    expected_expenses_per_day: int

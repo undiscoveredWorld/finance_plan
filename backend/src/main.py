@@ -9,6 +9,8 @@ from end_points.category import category_router
 from end_points.subcategory import subcategory_router
 from end_points.buy import buy_router
 from end_points.import_data import import_data_router
+from end_points.reports_config import reports_config_router
+from end_points.reports import reports_router
 
 origins = ["http://5.35.88.46:3000"]
 
@@ -19,6 +21,8 @@ app.include_router(category_router)
 app.include_router(subcategory_router)
 app.include_router(buy_router)
 app.include_router(import_data_router)
+app.include_router(reports_config_router, prefix="/config/reports")
+app.include_router(reports_router, prefix="/reports")
 
 app.add_middleware(
     CORSMiddleware,

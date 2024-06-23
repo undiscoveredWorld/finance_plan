@@ -16,7 +16,6 @@ from domain.models import (
 )
 
 
-@invalidate_cache_by_call("Buys")
 def add_buy(buy: BuyCreate) -> int:
     """Add buy to db.
 
@@ -46,7 +45,6 @@ def generate_multiple_adding_buy() -> (callable, callable):
     return add_one_buy, db_session.commit
 
 
-@redis_cache_list_models("Buys")
 def list_buys() -> list[Buy]:
     db_session: Session = get_session()
     db_buys = db_session.query(DB_Buy).all()
@@ -70,7 +68,6 @@ def _convert_db_buys_to_buys(db_buys):
     return result
 
 
-@invalidate_cache_by_call("Buys")
 def update_buy(id_: int, new_buy: BuyUpdate) -> None:
     """Update buy in db.
 
@@ -92,7 +89,6 @@ def update_buy(id_: int, new_buy: BuyUpdate) -> None:
     db_session.commit()
 
 
-@invalidate_cache_by_call("Buys")
 def delete_buy(id_: int) -> None:
     """Delete buy."""
     db_session: Session = get_session()
@@ -100,7 +96,6 @@ def delete_buy(id_: int) -> None:
     db_session.commit()
 
 
-@invalidate_cache_by_call("Buys")
 def clear_buys() -> None:
     db_session: Session = get_session()
     db_session.query(DB_Buy).delete()

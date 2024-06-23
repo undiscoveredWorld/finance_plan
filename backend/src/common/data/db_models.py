@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import (
     Column,
     String,
@@ -49,6 +51,14 @@ class Buy(Base):
 
     category = relationship("Category", back_populates="buys")
     subcategory = relationship("Subcategory", back_populates="buys")
+
+
+class ReportsConfig(Base):
+    __tablename__ = "report_configs"
+
+    id = mapped_column(Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    start_day = Column(Date, nullable=False, default=datetime.date.today())
+    expected_expenses_per_day = Column(Integer, unique=False, nullable=False, default=290)
 
 
 Base.metadata.create_all(bind=engine)
