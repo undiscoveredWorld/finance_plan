@@ -34,5 +34,6 @@ run-docker-debug:
 	make postgres-docker-run
 	sleep 3
 	make adminer-run
+	make redis-run
 	make finance-plan-run
 
