@@ -9,6 +9,7 @@ finance-plan-run:
 		--rm \
 		-v finance_plan:/data \
 		--link finance_plan_postgres \
+		--link finance_plan_redis \
 		-e POSTGRES_HOST=finance_plan_postgres \
 		-e REDIS_HOST=finance_plan_redis \
 		finance_plan
@@ -34,5 +35,6 @@ run-docker-debug:
 	make postgres-docker-run
 	sleep 3
 	make adminer-run
+	make redis-run
 	make finance-plan-run
 
