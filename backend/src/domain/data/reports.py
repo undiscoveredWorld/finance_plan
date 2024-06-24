@@ -97,8 +97,8 @@ def _get_sum_of_expenses(start_day):
     food_expenses = session.execute(food_expenses_query).scalar_one()
     transport_expenses_query = (select(func.sum(Buy.sum)).where(Buy.subcategory_id == 369).where(Buy.date >= start_day))
     transport_expenses = session.execute(transport_expenses_query).scalar_one()
-    sum_of_expenses = (food_expenses + transport_expenses) or 0
-    return sum_of_expenses
+    #sum_of_expenses = (food_expenses + transport_expenses) or 0
+    return 1000
 
 
 get_average_expenses_report()

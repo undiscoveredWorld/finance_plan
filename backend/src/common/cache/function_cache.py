@@ -20,7 +20,7 @@ def redis_cache_list_models(key: str) -> callable(callable):
         def inner_func(*args, **kwargs):
             nonlocal model
             value = get_value_from_redis(key)
-            if value is None:
+            if value is None or value == []:
                 func_result = func(*args, **kwargs)
                 model = _get_model_of_func_result(func_result)
                 func_result_str = _convert_func_result_to_str(func_result)

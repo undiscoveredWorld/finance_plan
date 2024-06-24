@@ -19,6 +19,8 @@ class Category(CategoryBase):
     id: int
     name: str
 
+    subcategories: list["Subcategory"]
+
     class Config:
         from_attributes = True
 
