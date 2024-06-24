@@ -12,7 +12,7 @@ from end_points.import_data import import_data_router
 from end_points.reports_config import reports_config_router
 from end_points.reports import reports_router
 
-origins = ["http://5.35.88.46:3000"]
+origins = ["http://5.35.88.46:3000", "http://85.94.26.81:3000", "http://localhost:3000"]
 
 logging.basicConfig(level=logging.INFO)
 

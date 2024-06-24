@@ -31,12 +31,19 @@ def add_category(category: CategoryCreate) -> int:
     return new_category.id
 
 
-@redis_cache_list_models("categories")
-@convert_return_to_list_of_model(Category)
-def list_categories() -> list[type[DB_Category]]:
+def list_categories() -> list[Category]:
     db_session: Session = get_session()
     db_categories = db_session.query(DB_Category).all()
-    return db_categories
+
+    model_categories: list[Category] = []
+    for category in db_categories:
+        model_categories.append(Category(
+            id=category.id,
+            name=category.name,
+            subcategories=category.subcategories
+        ))
+
+    return model_categories
 
 
 @invalidate_cache_by_call("categories")
