@@ -14,7 +14,7 @@ export const is_array_equal_array = (array1, array2) => {
 }
 
 export const get_and_refresh_rows = (refreshRows) => {
-    axios.get("http://5.35.88.46:8080/buys").then((response) => {
+    axios.get("http://31.128.37.252:8080/buys").then((response) => {
         const new_rows = response.data
         refreshRows(new_rows)
     })
