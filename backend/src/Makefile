@@ -10,6 +10,7 @@ finance-plan-run:
 		-v finance_plan:/data \
 		--link finance_plan_postgres \
 		-e POSTGRES_HOST=finance_plan_postgres \
+		-e REDIS_HOST=finance_plan_redis \
 		finance_plan
 
 adminer-run:
@@ -18,6 +19,9 @@ adminer-run:
 	--rm \
 	--link finance_plan_postgres \
 	adminer
+
+redis-run:
+	docker run -d --name finance_plan_redis -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 
 run-docker-production:
 	make build
