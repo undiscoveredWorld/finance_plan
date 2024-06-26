@@ -1,10 +1,10 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import Session
 
-from common.data.utils import check_object_is_subclass_of_model
 from common.data.db import get_session
 from common.data.db_models import ReportsConfig as DB_ReportsConfig
+from common.data.utils import check_object_is_subclass_of_model
 from domain.models import (
     ReportsConfigCreate,
     ReportsConfigUpdate,

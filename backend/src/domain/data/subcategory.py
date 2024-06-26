@@ -4,6 +4,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.exc import NoResultFound
 
+from settings import CACHING_KEYS
 from common.data.utils import (
     check_object_is_subclass_of_model
 )
@@ -23,7 +24,7 @@ from domain.models import (
 )
 
 
-@invalidate_cache_by_call("Subcategories")
+@invalidate_cache_by_call(CACHING_KEYS["subcategories"])
 def add_subcategory(subcategory: SubcategoryCreate) -> int:
     """Add subcategory to db.
 
@@ -40,7 +41,7 @@ def add_subcategory(subcategory: SubcategoryCreate) -> int:
     return new_subcategory.id
 
 
-@redis_cache_list_models("Subcategories")
+@redis_cache_list_models(CACHING_KEYS["subcategories"], Subcategory)
 @convert_return_to_list_of_model(Subcategory)
 def list_subcategories() -> list[type[Subcategory]]:
     db_session: Session = get_session()
@@ -48,7 +49,7 @@ def list_subcategories() -> list[type[Subcategory]]:
     return db_subcategories
 
 
-@invalidate_cache_by_call("Subcategories")
+@invalidate_cache_by_call(CACHING_KEYS["subcategories"])
 def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
     """Update subcategory in db.
 
@@ -70,14 +71,14 @@ def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
     db_session.commit()
 
 
-@invalidate_cache_by_call("Subcategories")
+@invalidate_cache_by_call(CACHING_KEYS["subcategories"])
 def delete_subcategory(id_: int) -> None:
     db_session: Session = get_session()
     db_session.query(DB_Subcategory).filter_by(id=id_).delete()
     db_session.commit()
 
 
-@invalidate_cache_by_call("Subcategories")
+@invalidate_cache_by_call(CACHING_KEYS["subcategories"])
 def clear_subcategories() -> None:
     db_session: Session = get_session()
     db_session.query(DB_Subcategory).delete()

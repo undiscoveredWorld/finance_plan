@@ -1,14 +1,10 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import Session
 
-from common.data.utils import check_object_is_subclass_of_model
 from common.data.db import get_session
 from common.data.db_models import Buy as DB_Buy
-from common.cache.function_cache import (
-    invalidate_cache_by_call,
-    redis_cache_list_models,
-)
+from common.data.utils import check_object_is_subclass_of_model
 from domain.models import (
     BuyCreate,
     BuyUpdate,
@@ -33,6 +29,11 @@ def add_buy(buy: BuyCreate) -> int:
 
 
 def generate_multiple_adding_buy() -> (callable, callable):
+    """Generate two function -- add_one_buy(buy: BuyCreate) and commit all buys.
+
+    Returns:
+        add_one_buy callable(buy: BuyCreate), commit: callable()
+    """
     db_session: Session = get_session()
 
     def add_one_buy(buy: BuyCreate) -> int:

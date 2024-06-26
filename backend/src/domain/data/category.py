@@ -1,20 +1,23 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import Session
 
-from common.data.utils import check_object_is_subclass_of_model
+from settings import CACHING_KEYS
 from common.data.db import get_session
 from common.data.db_models import Category as DB_Category
+from common.data.utils import check_object_is_subclass_of_model
+from common.cache.function_cache import (
+    redis_cache_list_models,
+    invalidate_cache_by_call,
+)
 from domain.models import (
     CategoryCreate,
     CategoryUpdate,
     Category,
 )
-from common.cache.function_cache import redis_cache_list_models, invalidate_cache_by_call
-from common.data.utils import convert_return_to_list_of_model
 
 
-@invalidate_cache_by_call("categories")
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def add_category(category: CategoryCreate) -> int:
     """Add category to db.
 
@@ -31,6 +34,7 @@ def add_category(category: CategoryCreate) -> int:
     return new_category.id
 
 
+@redis_cache_list_models(CACHING_KEYS["categories"], Category)
 def list_categories() -> list[Category]:
     db_session: Session = get_session()
     db_categories = db_session.query(DB_Category).all()
@@ -46,7 +50,7 @@ def list_categories() -> list[Category]:
     return model_categories
 
 
-@invalidate_cache_by_call("categories")
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def update_category(id_: int, new_category: CategoryUpdate) -> None:
     """Update category in db.
 
@@ -69,7 +73,7 @@ def update_category(id_: int, new_category: CategoryUpdate) -> None:
     db_session.commit()
 
 
-@invalidate_cache_by_call("categories")
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def delete_category(id_: int) -> None:
     """Delete category."""
     db_session: Session = get_session()
@@ -77,7 +81,7 @@ def delete_category(id_: int) -> None:
     db_session.commit()
 
 
-@invalidate_cache_by_call("categories")
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def clear_categories() -> None:
     db_session: Session = get_session()
     db_session.query(DB_Category).delete()

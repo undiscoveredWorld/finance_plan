@@ -39,8 +39,9 @@ from domain.data.import_buys import (
     _ImportResolver,
     _get_date_from_str,
     _read_ranges,
-    _create_buys_from_rows
+    _create_buys_from_rows,
 )
+from utils import create_buy
 
 
 class TestModel(BaseModel):
@@ -254,7 +255,7 @@ class DataSubcategoryTest(unittest.TestCase):
 
 class DataBuyTest(unittest.TestCase):
     def test_positive_add_buy(self):
-        _create_buy()
+        create_buy()
         buys = list_buys()
         self.assertEqual(
             1,
@@ -298,7 +299,7 @@ class DataBuyTest(unittest.TestCase):
             )
 
     def test_positive_list_buys(self):
-        category_id, subcategory_id, _ = _create_buy()
+        category_id, subcategory_id, _ = create_buy()
         buys = list_buys()
         self.assertEqual(
             1,
@@ -322,7 +323,7 @@ class DataBuyTest(unittest.TestCase):
         )
 
     def test_positive_update_buy(self):
-        _, _, buy_id = _create_buy()
+        _, _, buy_id = create_buy()
         update_buy(buy_id, BuyUpdate(product="Updated"))
         self.assertEqual(
             "Updated",
@@ -334,17 +335,17 @@ class DataBuyTest(unittest.TestCase):
             update_buy(100, BuyUpdate(name="Updated"))
 
     def test_update_buy_by_other_model(self):
-        _, _, buy_id = _create_buy()
+        _, _, buy_id = create_buy()
         with self.assertRaises(TypeError):
             update_buy(buy_id, CategoryUpdate(name="Updated"))
 
     def test_update_buy_link_to_category_on_not_existing_category(self):
-        _, _, buy_id = _create_buy()
+        _, _, buy_id = create_buy()
         with self.assertRaises(IntegrityError):
             update_buy(buy_id, BuyUpdate(category_id=100))
 
     def test_positive_delete_buy(self):
-        _, _, buy_id = _create_buy()
+        _, _, buy_id = create_buy()
         delete_buy(buy_id)
         self.assertEqual([], list_buys())
 
@@ -498,23 +499,4 @@ class ImportBuysTest(unittest.TestCase):
         clear_subcategories()
         clear_categories()
 
-
-def _create_buy() -> (int, int, int):
-    """Create buy and return category_id, subcategory_id and buy_id.
-
-    Returns:
-        (category_id, subcategory_id, buy_id)
-    """
-    category_id = add_category(CategoryCreate(name="test_category"))
-    subcategory_id = add_subcategory(SubcategoryCreate(name="test_subcategory", category_id=category_id))
-    buy_id = add_buy(
-        BuyCreate(
-            datetime.date.today(),
-            category_id,
-            subcategory_id,
-            "test_product",
-            100
-        )
-    )
-    return category_id, subcategory_id, buy_id
 

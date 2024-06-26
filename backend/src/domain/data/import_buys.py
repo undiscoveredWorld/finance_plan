@@ -6,14 +6,13 @@ from dateutil.parser import parse
 from fastapi import UploadFile
 from functools import lru_cache
 
+from settings import CACHING_KEYS
+from common.cache.redis_connect import invalidate_key
+from common.data.utils import create_uploaded_file
 from common.data.import_data import (
     read_range_from_sheet,
     open_sheet
 )
-from common.cache.redis_connect import invalidate_key
-from domain.data.category import list_categories, add_category
-from domain.data.subcategory import list_subcategories, add_subcategory
-from domain.data.buy import generate_multiple_adding_buy
 from domain.models import (
     Category,
     Subcategory,
@@ -21,7 +20,9 @@ from domain.models import (
     SubcategoryCreate,
     BuyCreate,
 )
-from common.data.utils import create_uploaded_file
+from domain.data.category import list_categories, add_category
+from domain.data.subcategory import list_subcategories, add_subcategory
+from domain.data.buy import generate_multiple_adding_buy
 
 
 class _ImportResolver:
@@ -55,7 +56,7 @@ class _ImportResolver:
                 return subcategory.id
 
         id_ = add_subcategory(SubcategoryCreate(name=subcategory_name, category_id=parent_category_id))
-        self.subcategories = list_subcategories()
+        self.subcategories = _convert_db_subcategories_to_model_subcategories(list_subcategories())
         return id_
 
     def _is_category_id_exist(self, category_id: int) -> bool:
@@ -82,9 +83,17 @@ def _read_ranges(sheet_name: str, ranges: list[str], path_to_file: str):
 
 def _get_import_resolver() -> _ImportResolver:
     categories = list_categories()
-    subcategories = list_subcategories()
+    db_subcategories = list_subcategories()
+    subcategories = _convert_db_subcategories_to_model_subcategories(db_subcategories)
     import_resolver = _ImportResolver(categories, subcategories)
     return import_resolver
+
+
+def _convert_db_subcategories_to_model_subcategories(db_subcategories):
+    subcategories: list[Subcategory] = []
+    for subcategory in db_subcategories:
+        subcategories.append(Subcategory.model_validate(subcategory.__dict__))
+    return subcategories
 
 
 def _create_buys_from_rows(rows: list[list[str]]):
@@ -118,5 +127,5 @@ def import_buys(sheet_name: str, ranges: list[str], file: UploadFile):
 
 
 def _invalidate_cache():
-    invalidate_key("categories")
-    invalidate_key("Subcategories")
+    invalidate_key(CACHING_KEYS["categories"])
+    invalidate_key(CACHING_KEYS["subcategories"])
