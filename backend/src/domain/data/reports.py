@@ -2,12 +2,13 @@ import datetime
 import calendar
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
+from sqlalchemy.orm import Session
 
 from common.data.db import get_session
 from common.data.db_models import Buy
 from domain.data.config import list_reports_configs
+from domain.data.category import list_categories
 
 
 def get_expenses_by_category_by_month(category_id: int, year: int, month: int) -> int | None:
@@ -19,13 +20,46 @@ def get_expenses_by_category_by_month(category_id: int, year: int, month: int) -
     return session.execute(query).scalar_one()
 
 
-def get_expenses_by_subcategory_by_month(subcategory_id: int, year: int, month: int) -> int | None:
+def get_expenses_by_subcategory_by_month(category_id: int, subcategory_id: int, year: int, month: int) -> int | None:
     session: Session = get_session()
     query = (select(func.sum(Buy.sum).label("expenses"))
+             .where(category_id == Buy.category_id)
              .where(subcategory_id == Buy.subcategory_id)
              .where(Buy.date >= datetime.date(day=1, month=month, year=year))
              .where(Buy.date <= datetime.date(day=calendar.monthrange(year, month)[1], month=month, year=year)))
     return session.execute(query).scalar_one()
+
+
+def get_expenses_by_all_categories_and_subcategories_by_month(year: int, month: int) -> dict:
+    """Get expenses by all categories and subcategories by month.
+
+    Structure of returned dictionary is as follows:
+    {
+        <category names>: {
+            "Expenses": <amount of expenses in category>
+            "Subcategories": {
+                <subcategory names>: <amount of expenses in subcategory>
+            }
+        }
+    }
+
+    Returns:
+        JSON-like dictionary with next structure
+    """
+    categories = list_categories()
+    result = {}
+    for category in categories:
+        category_expenses = get_expenses_by_category_by_month(category.id, year, month)
+        result[category.name] = {
+            "Expenses": category_expenses,
+            "Subcategories": {}
+        }
+        all_subcategories_expenses = result[category.name]["Subcategories"]
+        for subcategory in category.subcategories:
+            subcategory_expenses = get_expenses_by_subcategory_by_month(category.id, subcategory.id, year, month)
+            all_subcategories_expenses[subcategory.name] = subcategory_expenses
+
+    return result
 
 
 def get_expenses_by_day(date: datetime.date) -> int | None:
@@ -33,6 +67,24 @@ def get_expenses_by_day(date: datetime.date) -> int | None:
     query = (select(func.sum(Buy.sum).label("expenses"))
              .where(Buy.date == date))
     return session.execute(query).scalar_one()
+
+
+def get_expenses_by_all_days_in_month(year: int, month: int):
+    session: Session = get_session()
+    query = (session.query(Buy.date, func.sum(Buy.sum).label("expenses"))
+             .group_by(Buy.date)
+             .order_by(Buy.date)
+             .where(Buy.date >= datetime.date(day=1, month=month, year=year))
+             .where(Buy.date <= datetime.date(day=calendar.monthrange(year, month)[1], month=month, year=year)))
+    query_result: list[tuple[datetime.date, int]] = query.all()
+    result = {}
+    for i in range(1, calendar.monthrange(year, month)[1] + 1):
+        result[str(datetime.date(year, month, i))] = 0
+
+    for r in query_result:
+        result[str(r[0])] = r[1]
+
+    return result
 
 
 def get_average_expenses_report() -> dict:
@@ -92,13 +144,14 @@ def _get_day_past(start_day, offset_days=0):
 
 
 def _get_sum_of_expenses(start_day):
+    # TODO: fix report
     session: Session = get_session()
-    food_expenses_query = (select(func.sum(Buy.sum)).where(Buy.category_id == 598).where(Buy.date >= start_day))
-    food_expenses = session.execute(food_expenses_query).scalar_one()
-    transport_expenses_query = (select(func.sum(Buy.sum)).where(Buy.subcategory_id == 369).where(Buy.date >= start_day))
-    transport_expenses = session.execute(transport_expenses_query).scalar_one()
-    #sum_of_expenses = (food_expenses + transport_expenses) or 0
-    return 1000
+    food_expenses_query = (select(func.sum(Buy.sum)).where(Buy.category_id == 1).where(Buy.date >= start_day))
+    food_expenses = session.execute(food_expenses_query).scalar_one() or 0
+    transport_expenses_query = (select(func.sum(Buy.sum)).where(Buy.subcategory_id == 3).where(Buy.date >= start_day))
+    transport_expenses = session.execute(transport_expenses_query).scalar_one() or 0
+    sum_of_expenses = (food_expenses + transport_expenses) or 0
+    return sum_of_expenses
 
 
 get_average_expenses_report()

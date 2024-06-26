@@ -13,6 +13,7 @@ from domain.models import (
     BuyCreate,
     BuyUpdate,
     Category,
+    ReportsConfigCreate,
 )
 from domain.data.category import (
     add_category,
@@ -35,11 +36,21 @@ from domain.data.buy import (
     delete_buy,
     clear_buys,
 )
+from domain.data.config import (
+    add_reports_config,
+    clear_reports_configs,
+)
 from domain.data.import_buys import (
     _ImportResolver,
     _get_date_from_str,
     _read_ranges,
     _create_buys_from_rows,
+    import_buys_from_path_to_file,
+)
+from domain.data.reports import (
+    get_expenses_by_all_categories_and_subcategories_by_month,
+    get_expenses_by_all_days_in_month,
+    get_average_expenses_report,
 )
 from utils import create_buy
 
@@ -482,8 +493,6 @@ class ImportBuysTest(unittest.TestCase):
             rows = [[3]]
             _create_buys_from_rows(rows)
 
-
-
     def _update_lists(self):
         self.categories = list_categories()
         self.subcategories = list_subcategories()
@@ -500,3 +509,57 @@ class ImportBuysTest(unittest.TestCase):
         clear_categories()
 
 
+class ReportsTest(unittest.TestCase):
+    def test_set_up_class(self):
+        self.assertEqual(8, len(list_buys()))
+
+    def test_positive_get_all_expenses_by_categories_and_subcategories(self):
+        self.assertEqual(
+            {
+                'Food': {
+                    'Expenses': 6901,
+                    'Subcategories': {
+                        'At home': 900,
+                        'At work': 1000,
+                        'Server': 5000,
+                        '': 1,
+                    }
+                },
+                'Other': {
+                    'Expenses': 15000,
+                    'Subcategories': {
+                        'Server': 10000,
+                        'Transport': 5000
+                    }
+                }
+            },
+            get_expenses_by_all_categories_and_subcategories_by_month(2024, 6)
+        )
+
+    def test_positive_get_expenses_by_all_days_in_month(self):
+        result = get_expenses_by_all_days_in_month(2024, 6)
+        self.assertEqual(30, len(result.keys()))
+        self.assertEqual(100, result[str(datetime.date(2024, 6, 1))])
+        self.assertEqual(0, result[str(datetime.date(2024, 6, 2))])
+        self.assertEqual(500, result[str(datetime.date(2024, 6, 3))])
+
+    def test_positive_get_average_expenses_report(self):
+        # TODO: do test
+        clear_reports_configs()
+        add_reports_config(ReportsConfigCreate(
+            start_day=datetime.date(2024, 6, 1),
+            expected_expenses_per_day=290
+        ))
+
+        result = get_average_expenses_report()
+        print(result)
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        import_buys_from_path_to_file("Sheet1", ["A1:E8"], "./test_reports.xlsx")
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        clear_buys()

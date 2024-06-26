@@ -126,6 +126,12 @@ def import_buys(sheet_name: str, ranges: list[str], file: UploadFile):
     os.remove(path_to_file)
 
 
+def import_buys_from_path_to_file(sheet_name: str, ranges: list[str], path_to_file: str):
+    rows = _read_ranges(sheet_name, ranges, path_to_file)
+    _invalidate_cache()
+    _create_buys_from_rows(rows)
+
+
 def _invalidate_cache():
     invalidate_key(CACHING_KEYS["categories"])
     invalidate_key(CACHING_KEYS["subcategories"])

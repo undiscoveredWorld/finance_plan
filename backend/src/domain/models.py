@@ -27,7 +27,6 @@ class Category(CategoryBase):
 
 class SubcategoryBase(BaseModel):
     name: str | None = None
-    category_id: int | None = None
 
 
 class SubcategoryCreate(SubcategoryBase):
@@ -36,7 +35,7 @@ class SubcategoryCreate(SubcategoryBase):
 
 
 class SubcategoryUpdate(SubcategoryBase):
-    ...
+    name: str | None = None
 
 
 class Subcategory(SubcategoryBase):
@@ -114,5 +113,5 @@ class ReportsConfigUpdate(ReportsConfigBase):
 
 class ReportsConfig(ReportsConfigBase):
     id: int
-    start_date: datetime.date
+    start_day: datetime.date
     expected_expenses_per_day: int
