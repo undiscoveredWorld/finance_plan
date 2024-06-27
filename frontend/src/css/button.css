@@ -14,3 +14,143 @@ button h3 {
     padding: 0;
     margin: 0;
 }
+
+.default_button {
+    background-color: var(--main-color);
+    text-align: center;
+    width: 1140px;
+    height: 108px;
+    margin-top: 30px;
+    transition: all .3s ease-in-out;
+}
+
+.create_button {
+    background-color: #FFF3E5;
+    text-align: center;
+    width: 1140px;
+    height: 108px;
+    transition: all .3s ease-in-out;
+    margin-top: 20px;
+}
+
+.default_button:hover {
+    transform: scale(1.065);
+    cursor: pointer;
+}
+
+.create_button:hover {
+    transform: scale(1.065);
+    cursor: pointer;
+}
+
+.change_button {
+    background-color: var(--main-color);
+    width: 133px;
+    height: 106px;
+    margin-left: 15px;
+    padding: 10px;
+    border: 1px solid #000;
+}
+
+.editing_button {
+    text-align: center;
+    background-color: var(--main-color);
+    width: 844px;
+    height: 106px;
+    border: 1px solid #000;
+    transform: translateY(8%);
+}
+
+.delete_button_default {
+    background-color: #E98888;
+    text-align: center;
+    width: 844px;
+    height: 106px;
+    border: 1px solid #000;
+    transform: translateY(1%);
+}
+
+.change_button_delete {
+    background-color: #E98888;
+    width: 133px;
+    height: 106px;
+    margin-left: 15px;
+    padding: 10px;
+    border: 1px solid #000;
+    transform: translateY(-7%);
+}
+
+.subcategory_button {
+    width: 950px;
+    height: 108px;
+    border: 1px solid #000;
+    background: var(--Table-row-1, #FFEAD2);
+    margin-top: 45px;
+    transition: all .3s ease-in-out;
+}
+
+.subcategory_button:hover {
+    transform: scale(1.065);
+    cursor: pointer;
+}
+
+.subcategory_create {
+    width: 950px;
+    height: 108px;
+    border: 1px solid #000;
+    background: var(--Table-row-2, #FFF3E5);
+    margin-top: 27px;
+    transition: all .3s ease-in-out;
+}
+
+.subcategory_create:hover {
+    transform: scale(1.065);
+    cursor: pointer;
+}
+
+.change_button_subcategories_create {
+    width: 125px;
+    height: 120px;
+    background-color: var(--main-color);
+    margin-left: 10px;
+    padding: 10px;
+    border: 1px solid #000;
+}
+
+.change_button_subcategories {
+    width: 125px;
+    height: 120px;
+    border: 1px solid #000;
+    background: var(--Table-row-1, #FFE9D0);
+    padding: 10px;
+    margin-left: 10px;
+    transform: translateY(-7%);
+}
+
+.editing_button_subcategories {
+    text-align: center;
+    border: 1px solid #000;
+    background: var(--Table-row-1, #FFEAD2);
+    width: 680px;
+    height: 120px;
+    margin-top: 27px;
+}
+
+.delete_button_default_subcategories {
+    text-align: center;
+    border: 1px solid #000;
+    background: var(--Table-row-1, #E98888);
+    width: 680px;
+    height: 120px;
+    margin-top: 27px;
+}
+
+.change_button_delete_subcategories {
+    background-color: #E98888;
+    width: 125px;
+    height: 120px;
+    margin-left: 10px;
+    padding: 10px;
+    border: 1px solid #000;
+    transform: translateY(-7%);
+}

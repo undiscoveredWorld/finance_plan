@@ -1,0 +1,16 @@
+@media (max-width: 834px) {
+    .site-name {
+        font-size: 40px;
+    }
+    .col-auto {
+        font-size: 36px;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+    .main-menu-element-container {
+        max-width: 732px;
+        max-height: 84px;
+    }
+}

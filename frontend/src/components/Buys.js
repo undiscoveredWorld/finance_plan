@@ -3,6 +3,7 @@ import ControlPanelManager from "./ControlPanel";
 import Table from "./Table";
 import {is_array_equal_array, get_and_refresh_rows} from "../utils"
 
+
 const Buys = () => {
     const [mode, setMode] = useState("default")
     const [rows, setRows] = useState([])
