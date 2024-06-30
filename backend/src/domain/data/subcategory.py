@@ -25,6 +25,7 @@ from domain.models import (
 
 
 @invalidate_cache_by_call(CACHING_KEYS["subcategories"])
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def add_subcategory(subcategory: SubcategoryCreate) -> int:
     """Add subcategory to db.
 
@@ -50,6 +51,7 @@ def list_subcategories() -> list[type[Subcategory]]:
 
 
 @invalidate_cache_by_call(CACHING_KEYS["subcategories"])
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
     """Update subcategory in db.
 
@@ -72,6 +74,7 @@ def update_subcategory(id_: int, new_subcategory: SubcategoryUpdate) -> None:
 
 
 @invalidate_cache_by_call(CACHING_KEYS["subcategories"])
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def delete_subcategory(id_: int) -> None:
     db_session: Session = get_session()
     db_session.query(DB_Subcategory).filter_by(id=id_).delete()
@@ -79,6 +82,7 @@ def delete_subcategory(id_: int) -> None:
 
 
 @invalidate_cache_by_call(CACHING_KEYS["subcategories"])
+@invalidate_cache_by_call(CACHING_KEYS["categories"])
 def clear_subcategories() -> None:
     db_session: Session = get_session()
     db_session.query(DB_Subcategory).delete()

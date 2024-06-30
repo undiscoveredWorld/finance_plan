@@ -7,8 +7,7 @@
     "react-table-lite": "^3.0.3"
   },
   "scripts": {
-    "start": "BROWSER=None react-scripts start",
-    "dedug": "BROWSER=None react-scripts debug"
+    "start": "BROWSER=None react-scripts start"
   },
   "browserslist": {
     "production": [

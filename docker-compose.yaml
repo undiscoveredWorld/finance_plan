@@ -7,11 +7,19 @@ services:
       - backend/src/docker.env
     ports:
       - "5432:5432"
+
+  finance_plan_redis:
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"
+
   finance_plan:
     depends_on:
       - finance_plan_postgres
+      - finance_plan_redis
     links:
       - finance_plan_postgres
+      - finance_plan_redis
     ports:
       - "80:8080"
     environment:

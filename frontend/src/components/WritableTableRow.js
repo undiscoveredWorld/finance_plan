@@ -10,13 +10,15 @@ const WritableTableRow = (props) => {
     const [product, setProduct] = useState(row_data.product)
     const [sum, setSum] = useState(row_data.sum === -1 ? "" :row_data.sum)
 
-    return <tr className="writable_row">
-        <WritableTD default_value={date} setter={setDate} />
-        <WritableTD default_value={category_name} setter={setCategoryName} />
-        <WritableTD default_value={subcategory_name} setter={setSubcategoryName} />
-        <WritableTD default_value={product} setter={setProduct} />
-        <WritableTD default_value={sum} setter={setSum} />
-    </tr>
+    return (
+        <tr className="writable_row">
+            <WritableTD default_value={date} setter={setDate} />
+            <WritableTD default_value={category_name} setter={setCategoryName} />
+            <WritableTD default_value={subcategory_name} setter={setSubcategoryName} />
+            <WritableTD default_value={product} setter={setProduct} />
+            <WritableTD default_value={sum} setter={setSum} />
+        </tr>
+    )
 }
 
 export default WritableTableRow

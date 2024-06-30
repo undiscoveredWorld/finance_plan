@@ -1,7 +1,8 @@
 import {useState, useEffect} from "react";
+
 import ControlPanelManager from "./ControlPanel";
 import Table from "./Table";
-import {is_array_equal_array, get_and_refresh_rows} from "../utils"
+import {is_array_equal_array, get_and_refresh_buys} from "../utils"
 
 const Buys = () => {
     const [mode, setMode] = useState("default")
@@ -21,25 +22,27 @@ const Buys = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            get_and_refresh_rows(refreshRows)
+            get_and_refresh_buys(refreshRows)
         }, 30_000)
         return () => {
             clearInterval(interval)
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
-        get_and_refresh_rows(refreshRows)
+        get_and_refresh_buys(refreshRows)
     }, []);
 
     const control_panel_manager = new ControlPanelManager(mode, setterMode)
 
-    return <>
-        {control_panel_manager.controlPanel}
-        <div className="container m-0 p-0">
-            <Table mode={mode} rows={rows} selectedRows={selectedRows} setSelectedRows={setSelectedRows}/>
-        </div>
-    </>
+    return (
+        <>
+            {control_panel_manager.controlPanel}
+            <div className="container m-0 p-0">
+                <Table mode={mode} rows={rows} selectedRows={selectedRows} setSelectedRows={setSelectedRows}/>
+            </div>
+        </>
+    )
 }
 
 export default Buys

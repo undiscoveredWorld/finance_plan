@@ -1,14 +1,16 @@
-import MainMenuElement from "./MainMenuElement";
+import MenuElement from "./MenuElement";
+import {empty_func} from "../utils";
 
-const MainMenu = (
-    {
-        buysOnClick = () => {},
-        reportsOnClick = () =>  {}
-    }) => {
-    return <div className="main-menu">
-        <MainMenuElement name="Buys" onClick={buysOnClick}/>
-        <MainMenuElement name="Reports" onClick={reportsOnClick}/>
-    </div>
+const MainMenu = (props) => {
+    const menuManager = props.menuManager
+
+    return (
+        <div className="main-menu">
+            <MenuElement name="Buys" onClick={menuManager.openBuys}/>
+            <MenuElement name="Reports" onClick={empty_func}/>
+            <MenuElement name="Categories" onClick={menuManager.openCategories}/>
+        </div>
+    )
 }
 
 export default MainMenu

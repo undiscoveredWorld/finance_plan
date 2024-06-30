@@ -1,0 +1,76 @@
+.list {
+    padding-top: 27px;
+    display: flex;
+    gap: 27px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.categories .flex-container{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    width: 100%;
+}
+
+.categories-menu-element {
+    width: 100%;
+}
+
+.categories-menu-element-container {
+    padding-left: 0;
+    background-color: var(--main-color);
+
+    border: 1px solid #000;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+.categories-menu-element h1 {
+    width: 100%;
+    text-align: center;
+}
+
+.input-category input {
+    font-size: 48px;
+    font-style: normal;
+    padding-left: 30px;
+}
+
+.create-category .categories-menu-element-container {
+    background-color: #FFE9D0;
+}
+
+.selected-category .categories-menu-element {
+    height: 100% !important;
+}
+
+.delete-category .categories-menu-element-container, .delete-category .svg-button {
+    background-color: #E98888;
+}
+
+.subcategories-list {
+    padding-left: 95px;
+    padding-right: 95px;
+}
+
+.subcategory .categories-menu-element-container {
+    background-color: #FFEAD2;
+}
+
+.create-subcategory .categories-menu-element-container {
+    background-color: #FFE9D0;
+}
+
+.selected-subcategory .categories-menu-element-container {
+    background-color: #FFEAD2;
+}
+
+.subcategories-list .svg-button {
+    background-color: #FFEAD2;
+}
+
+.delete-subcategory .categories-menu-element-container, .delete-subcategory .svg-button {
+    background-color: #E98888;
+}

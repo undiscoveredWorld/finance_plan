@@ -1,16 +1,6 @@
-.buys-table {
+.buys-table-control-panel {
     align-items: end;
-}
-
-.buys-table button {
-    align-self: end;
-    margin-left: 22px;
-    margin-right: 22px;
-    width: auto;
-}
-
-.buys-table button:last-child {
-    margin-right: 0;
+    gap: 44px;
 }
 
 table, table tr, tr td {
@@ -32,10 +22,6 @@ tr.table-title {
 
 .table-header h2 {
     padding: 15px;
-}
-
-input{
-    width: 100%;
 }
 
 tr {
@@ -63,6 +49,7 @@ td input {
     height: 100%;
     border: none;
     text-align: center;
+    width: 100%;
 }
 
 td h2 {

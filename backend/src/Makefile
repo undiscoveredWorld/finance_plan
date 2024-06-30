@@ -27,14 +27,15 @@ redis-run:
 run-docker-production:
 	make build
 	make postgres-docker-run
+	make redis-run
 	sleep 3
 	make finance_plan_run
 
 run-docker-debug:
 	make build
 	make postgres-docker-run
+	make redis-run
 	sleep 3
 	make adminer-run
-	make redis-run
 	make finance-plan-run
 

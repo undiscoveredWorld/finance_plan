@@ -28,6 +28,7 @@ h3 {
 
 .clickable {
     transition: all .3s ease-in-out;
+    user-select: none;
 }
 
 .clickable:hover {
